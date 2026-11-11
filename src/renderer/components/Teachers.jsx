@@ -141,7 +141,7 @@ const People = ({ user }) => {
   const formBaseline = useRef('')
   // The view survives a visit to a person's record and back.
   const [searchTerm, setSearchTerm] = usePersistentState('personnel:search', '')
-  const [listFilters, setListFilters] = usePersistentState('personnel:filters', { role: '', sex: '', gradeId: '' })
+  const [listFilters, setListFilters] = usePersistentState('personnel:filters', { role: '', sex: '', gradeId: '', accounts: '' })
   const [page, setPage] = usePersistentState('personnel:page', 1)
   // Six cards fill two rows of the three-column grid exactly, so a page never
   // ends on a ragged single card.
@@ -283,12 +283,18 @@ const People = ({ user }) => {
       if (listFilters.sex && person.PERSON_SEX !== listFilters.sex) return false
       if (listFilters.gradeId && String(person.MILITARY_GRADE_ID || '') !== listFilters.gradeId) return false
       if (listFilters.role && !personRoles(person).includes(listFilters.role)) return false
+      // How many sign-in accounts the person holds: no login yet, or more than
+      // one — the two states an administrator usually needs to chase.
+      const accounts = Number(person.EXISTING_ACCOUNTS || 0)
+      if (listFilters.accounts === 'none' && accounts > 0) return false
+      if (listFilters.accounts === 'multiple' && accounts < 2) return false
       return true
     })
   }, [people, searchTerm, listFilters])
 
   const filterCount =
-    (searchTerm ? 1 : 0) + (listFilters.sex ? 1 : 0) + (listFilters.gradeId ? 1 : 0) + (listFilters.role ? 1 : 0)
+    (searchTerm ? 1 : 0) + (listFilters.sex ? 1 : 0) + (listFilters.gradeId ? 1 : 0)
+    + (listFilters.role ? 1 : 0) + (listFilters.accounts ? 1 : 0)
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
   const safePage = Math.min(page, totalPages)
@@ -508,7 +514,7 @@ const People = ({ user }) => {
   const resetFilters = () => {
     setPendingUndo({ searchTerm, listFilters, page })
     setSearchTerm('')
-    setListFilters({ role: '', sex: '', gradeId: '' })
+    setListFilters({ role: '', sex: '', gradeId: '', accounts: '' })
     setPage(1)
   }
 
@@ -594,6 +600,17 @@ const People = ({ user }) => {
                     ))}
                   </select>
                 </FilterField>
+                <FilterField label={tr('Accounts')}>
+                  <select
+                    className={filterInputCls}
+                    value={listFilters.accounts || ''}
+                    onChange={e => { setListFilters(f => ({ ...f, accounts: e.target.value })); setPage(1) }}
+                  >
+                    <option value="">{tr('All')}</option>
+                    <option value="none">{tr('No login')}</option>
+                    <option value="multiple">{tr('More than one')}</option>
+                  </select>
+                </FilterField>
               </FilterBar>
               <button
                 type="button"
@@ -616,7 +633,7 @@ const People = ({ user }) => {
                 label={filterCount > 0 ? tr('No one matches these filters') : tr('No personnel records yet')}
                 hint={
                   filterCount > 0
-                    ? tr('Clear the role, grade or search filters to see the whole register.')
+                    ? tr('Clear the role, grade, account or search filters to see the whole register.')
                     : tr('Add the first person here, then give them a role in their record.')
                 }
               />

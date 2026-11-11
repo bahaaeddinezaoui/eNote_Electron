@@ -2,6 +2,10 @@
 export const ar50 = {
   'New account': 'حساب جديد',
   'Add account': 'إضافة حساب',
+  'No login': 'بدون تسجيل دخول',
+  'More than one': 'أكثر من واحد',
+  'Clear the role, grade, account or search filters to see the whole register.':
+    'امسح مرشحات الدور أو الرتبة أو الحساب أو البحث لعرض السجل كاملًا.',
   'Create account': 'إنشاء حساب',
   'The account belongs to a person already on file. Search the roster, choose the account role, then set the sign-in details.':
     'ينتمي الحساب إلى شخص مسجّل مسبقًا. ابحث عنه في السجل، واختر دور الحساب، ثم حدّد بيانات تسجيل الدخول.',
