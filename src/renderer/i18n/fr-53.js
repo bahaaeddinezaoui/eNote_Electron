@@ -1,6 +1,7 @@
 // French interface strings for creating an account for a selected person.
 export const fr53 = {
   'New account': 'Nouveau compte',
+  'Add account': 'Ajouter un compte',
   'Create account': 'Créer un compte',
   'The account belongs to a person already on file. Search the roster, choose the account role, then set the sign-in details.':
     'Le compte appartient à une personne déjà enregistrée. Recherchez-la dans le registre, choisissez le rôle du compte, puis définissez les identifiants de connexion.',

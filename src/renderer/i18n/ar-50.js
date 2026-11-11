@@ -1,6 +1,7 @@
 // Arabic interface strings for creating an account for a selected person.
 export const ar50 = {
   'New account': 'حساب جديد',
+  'Add account': 'إضافة حساب',
   'Create account': 'إنشاء حساب',
   'The account belongs to a person already on file. Search the roster, choose the account role, then set the sign-in details.':
     'ينتمي الحساب إلى شخص مسجّل مسبقًا. ابحث عنه في السجل، واختر دور الحساب، ثم حدّد بيانات تسجيل الدخول.',

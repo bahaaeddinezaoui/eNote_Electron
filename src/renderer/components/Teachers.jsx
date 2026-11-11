@@ -625,6 +625,7 @@ const People = ({ user }) => {
             <div className="grid grid-cols-1 gap-px bg-line md:grid-cols-2 xl:grid-cols-3">
               {paged.map(person => {
                 const roles = personRoles(person)
+                const accountCount = Number(person.EXISTING_ACCOUNTS || 0)
                 const initials = `${person.PERSON_FIRST_NAME?.[0] || ''}${person.PERSON_LAST_NAME?.[0] || ''}`.toUpperCase()
                 const picture = photoCache[Number(person.PERSON_ID)]
                 // Student records keep the same grade on person_grade_id, so a
@@ -741,10 +742,15 @@ const People = ({ user }) => {
                         type="button"
                         onClick={() => openAccountDialog(person)}
                         className="inline-flex h-7 items-center gap-1 rounded-[3px] px-1.5 text-[10.5px] text-ink-3 transition-colors hover:bg-surface-muted hover:text-ink"
-                        title={tr('Create account')}
-                        aria-label={`${tr('Create account')}: ${displayName(person)}`}
+                        title={accountCount > 0
+                          ? `${tr('Add account')} · ${accountCount}`
+                          : tr('Create account')}
+                        aria-label={`${accountCount > 0 ? tr('Add account') : tr('Create account')}: ${displayName(person)}`}
                       >
-                        <KeyRound size={11} aria-hidden="true" /> {tr('Create account')}
+                        <KeyRound size={11} aria-hidden="true" />
+                        {accountCount > 0
+                          ? `${tr('Add account')} · ${accountCount}`
+                          : tr('Create account')}
                       </button>
                       <button
                         type="button"
