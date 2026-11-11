@@ -133,8 +133,9 @@ export async function getStudentsWithSections(userId) {
            s.TEACHING_CATEGORY_ID, tc.teaching_category_label_en, tc.teaching_category_label_ar, tc.teaching_category_label_fr,
            sd.student_insurance_card_number, sd.student_military_card_number,
            sd.student_military_helmet_number,
-           -- Completion of the student's file, for the secretary's register:
-           -- how many of the checklist items are recorded, and the total.
+           -- Completion of the student's file, for the office register (an
+           -- admin and a secretary both see it): how many of the checklist
+           -- items are recorded, and the total.
            ${STUDENT_INFORMATION_CHECKS.map((check) => `(CASE WHEN ${check} THEN 1 ELSE 0 END)`).join(' + ')}
              AS INFO_FILLED,
            ${STUDENT_INFORMATION_CHECKS.length} AS INFO_TOTAL

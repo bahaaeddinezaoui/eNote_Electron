@@ -213,7 +213,8 @@ const StudentDirectory = ({ user, onOpenRecord }) => {
   const [sortDir, setSortDir] = usePersistentState('directory:sortDir', 'asc')
   const [categoryFilter, setCategoryFilter] = usePersistentState('directory:category', '')
   const [sectionFilter, setSectionFilter] = usePersistentState('directory:section', '')
-  // Secretary-only: show only the students whose file is complete/incomplete.
+  // Office only (admin and secretary): show only the students whose file is
+  // complete/incomplete.
   const [infoFilter, setInfoFilter] = usePersistentState('directory:info', '')
   const [page, setPage] = usePersistentState('directory:page', 1)
   const PAGE_SIZE = 25
@@ -311,9 +312,10 @@ const StudentDirectory = ({ user, onOpenRecord }) => {
   const isDirector = user?.roles?.includes('DIRECTOR')
   // Secretaries manage students too; other roles get read-only access.
   const canManage = isAdmin || user?.roles?.includes('SECRETARY')
-  // Chasing incomplete files is the secretary's work, so the completion column
-  // and its filter are theirs alone.
-  const tracksCompletion = !!user?.roles?.includes('SECRETARY')
+  // Chasing incomplete files is the office's work: an admin and a secretary both
+  // need to see which students are missing information, so the completion
+  // column and its filter are theirs. Other roles read the roster without it.
+  const tracksCompletion = isAdmin || !!user?.roles?.includes('SECRETARY')
   // The two oversight roles may replace a photo from the record summary, without
   // opening the full edit form.
 
@@ -1055,6 +1057,19 @@ const StudentDirectory = ({ user, onOpenRecord }) => {
     return [...set].sort()
   }, [students, categoryFilter, scope])
 
+  // How many students on the register still have an incomplete file. It is
+  // counted over the whole roster (already narrowed to the account's teaching
+  // categories), not over the filtered rows, so the masthead always answers
+  // "how much is left" and does not change while a search or filter is typed.
+  // A row with no completion figures counts as incomplete, exactly as in the
+  // filter below.
+  const missingInfoCount = useMemo(
+    () => (tracksCompletion
+      ? students.filter((s) => (studentCompletion(s)?.missing ?? 1) > 0).length
+      : 0),
+    [students, tracksCompletion]
+  )
+
   const hasActiveFilters = !!(searchTerm || categoryFilter || sectionFilter || (tracksCompletion && infoFilter))
 
   const filteredStudents = students.filter(s => {
@@ -1345,7 +1360,16 @@ const StudentDirectory = ({ user, onOpenRecord }) => {
       <PageHeader
         kicker={tr('Student registry')}
         title={tr('Student directory')}
-        meta={loading ? '—' : `${sortedStudents.length} ${tr(sortedStudents.length === 1 ? 'record' : 'records')}`}
+        meta={loading ? '—' : (
+          <span className="inline-flex flex-wrap items-center gap-x-2 gap-y-1">
+            <span>{`${sortedStudents.length} ${tr(sortedStudents.length === 1 ? 'record' : 'records')}`}</span>
+            {tracksCompletion && (missingInfoCount > 0 ? (
+              <StateMark tone="warn">{tr('Missing information: {count}', { count: missingInfoCount })}</StateMark>
+            ) : (
+              <StateMark tone="good">{tr('No missing information')}</StateMark>
+            ))}
+          </span>
+        )}
         actions={
           <>
             <button
