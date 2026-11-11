@@ -60,63 +60,81 @@ export async function getPersons() {
 // not a value — and they are all fields the registration form collects, so a
 // student registered from the form and not filled in further shows what is
 // still missing.
-export const STUDENT_INFORMATION_ITEMS = 32
-
-const STUDENT_INFORMATION_CHECKS = (() => {
+//
+// Each item also carries the key the record summary names it by: the roster
+// returns the keys that are still empty, so the office can see which fields to
+// fill instead of only how many. The renderer maps a key to a field label, so a
+// key is part of the interface and is not renamed on its own.
+export const STUDENT_INFORMATION_ITEMS = (() => {
   const filled = (expr) => `NULLIF(btrim((${expr})::text), '') IS NOT NULL`
   return [
     // Identity (person)
-    filled('COALESCE(p.person_first_name_la, p.person_first_name_ar)'),
-    filled('COALESCE(p.person_last_name_la, p.person_last_name_ar)'),
-    filled('p.person_birthdate'),
-    filled('p.person_sex'),
-    filled('COALESCE(p.person_photo, sd.student_photo)'),
+    { key: 'firstName', check: filled('COALESCE(p.person_first_name_la, p.person_first_name_ar)') },
+    { key: 'lastName', check: filled('COALESCE(p.person_last_name_la, p.person_last_name_ar)') },
+    { key: 'birthdate', check: filled('p.person_birthdate') },
+    { key: 'sex', check: filled('p.person_sex') },
+    { key: 'photo', check: filled('COALESCE(p.person_photo, sd.student_photo)') },
     // Placement
-    filled('s.SECTION_ID'),
+    { key: 'section', check: filled('s.SECTION_ID') },
     // Personal detail
-    filled('sd.student_birth_place_id'),
-    filled('sd.student_personal_phone'),
-    filled('sd.student_national_identification_number'),
-    filled('sd.student_birthdate_certificate_number'),
-    filled('sd.student_postal_account_number'),
-    filled('sd.student_baccalaureate_sub_number'),
-    filled('sd.student_school_sub_card_number'),
-    filled('sd.student_school_sub_date'),
-    filled('sd.student_laptop_serial_number'),
-    filled('sd.student_insurance_card_number'),
-    filled('sd.student_military_card_number'),
-    filled('sd.student_military_helmet_number'),
-    filled('sd.student_blood_type'),
-    filled('sd.student_height_cm'),
-    filled('sd.student_weight_kg'),
-    filled('sd.student_health_status_id'),
-    filled('sd.student_speciality_id'),
-    filled('sd.student_academic_level_id'),
-    filled('sd.student_academic_average'),
-    filled('sd.student_recruitment_source_id'),
+    { key: 'birthPlace', check: filled('sd.student_birth_place_id') },
+    { key: 'personalPhone', check: filled('sd.student_personal_phone') },
+    { key: 'nationalId', check: filled('sd.student_national_identification_number') },
+    { key: 'birthCertificate', check: filled('sd.student_birthdate_certificate_number') },
+    { key: 'postalAccount', check: filled('sd.student_postal_account_number') },
+    { key: 'baccalaureate', check: filled('sd.student_baccalaureate_sub_number') },
+    { key: 'schoolSubCard', check: filled('sd.student_school_sub_card_number') },
+    { key: 'schoolSubDate', check: filled('sd.student_school_sub_date') },
+    { key: 'laptopSerial', check: filled('sd.student_laptop_serial_number') },
+    { key: 'insuranceCard', check: filled('sd.student_insurance_card_number') },
+    { key: 'militaryCard', check: filled('sd.student_military_card_number') },
+    { key: 'militaryHelmet', check: filled('sd.student_military_helmet_number') },
+    { key: 'bloodType', check: filled('sd.student_blood_type') },
+    { key: 'height', check: filled('sd.student_height_cm') },
+    { key: 'weight', check: filled('sd.student_weight_kg') },
+    { key: 'healthStatus', check: filled('sd.student_health_status_id') },
+    { key: 'speciality', check: filled('sd.student_speciality_id') },
+    { key: 'academicLevel', check: filled('sd.student_academic_level_id') },
+    { key: 'academicAverage', check: filled('sd.student_academic_average') },
+    { key: 'recruitmentSource', check: filled('sd.student_recruitment_source_id') },
     // Family
-    `EXISTS (SELECT 1 FROM student_parent_info pi
+    {
+      key: 'father',
+      check: `EXISTS (SELECT 1 FROM student_parent_info pi
               WHERE pi.person_id = p.PERSON_ID
                 AND (NULLIF(btrim(pi.father_first_name_la), '') IS NOT NULL
-                     OR NULLIF(btrim(pi.father_last_name_la), '') IS NOT NULL))`,
-    `EXISTS (SELECT 1 FROM student_parent_info pi
+                     OR NULLIF(btrim(pi.father_last_name_la), '') IS NOT NULL))`
+    },
+    {
+      key: 'mother',
+      check: `EXISTS (SELECT 1 FROM student_parent_info pi
               WHERE pi.person_id = p.PERSON_ID
                 AND (NULLIF(btrim(pi.mother_first_name_la), '') IS NOT NULL
-                     OR NULLIF(btrim(pi.mother_last_name_la), '') IS NOT NULL))`,
+                     OR NULLIF(btrim(pi.mother_last_name_la), '') IS NOT NULL))`
+    },
     // A contact on file. A foreign student keeps no emergency contacts, so
     // this item never counts against them.
-    `(sd.student_is_foreign IS TRUE
+    {
+      key: 'emergencyContact',
+      check: `(sd.student_is_foreign IS TRUE
       OR EXISTS (SELECT 1 FROM student_emergency_contact c
                  WHERE c.person_id = p.PERSON_ID
-                   AND NULLIF(btrim(c.contact_phone_number), '') IS NOT NULL))`,
-    `EXISTS (SELECT 1 FROM student_hobby sh WHERE sh.person_id = p.PERSON_ID)`,
+                   AND NULLIF(btrim(c.contact_phone_number), '') IS NOT NULL))`
+    },
+    { key: 'hobbies', check: `EXISTS (SELECT 1 FROM student_hobby sh WHERE sh.person_id = p.PERSON_ID)` },
     // Kit
-    `EXISTS (SELECT 1 FROM student_combat_outfit co
+    {
+      key: 'combatOutfit',
+      check: `EXISTS (SELECT 1 FROM student_combat_outfit co
               WHERE co.person_id = p.PERSON_ID
-                AND NULLIF(btrim(co.first_outfit_number), '') IS NOT NULL)`,
-    `EXISTS (SELECT 1 FROM student_parade_uniform pu
+                AND NULLIF(btrim(co.first_outfit_number), '') IS NOT NULL)`
+    },
+    {
+      key: 'paradeUniform',
+      check: `EXISTS (SELECT 1 FROM student_parade_uniform pu
               WHERE pu.person_id = p.PERSON_ID
                 AND NULLIF(btrim(pu.summer_shirt_size), '') IS NOT NULL)`
+    }
   ]
 })()
 
@@ -135,10 +153,14 @@ export async function getStudentsWithSections(userId) {
            sd.student_military_helmet_number,
            -- Completion of the student's file, for the office register (an
            -- admin and a secretary both see it): how many of the checklist
-           -- items are recorded, and the total.
-           ${STUDENT_INFORMATION_CHECKS.map((check) => `(CASE WHEN ${check} THEN 1 ELSE 0 END)`).join(' + ')}
+           -- items are recorded, the total, and the keys of the ones that are
+           -- still empty so the record summary can name them.
+           ${STUDENT_INFORMATION_ITEMS.map((item) => `(CASE WHEN ${item.check} THEN 1 ELSE 0 END)`).join(' + ')}
              AS INFO_FILLED,
-           ${STUDENT_INFORMATION_CHECKS.length} AS INFO_TOTAL
+           ${STUDENT_INFORMATION_ITEMS.length} AS INFO_TOTAL,
+           array_remove(ARRAY[
+             ${STUDENT_INFORMATION_ITEMS.map((item) => `CASE WHEN ${item.check} THEN NULL ELSE '${item.key}' END`).join(',\n             ')}
+           ]::text[], NULL) AS INFO_MISSING
     FROM v_person p
     LEFT JOIN military_grade mg ON mg.military_grade_id = COALESCE(p.person_grade_id, p.military_grade_id)
     LEFT JOIN student_detail sd ON sd.person_id = p.PERSON_ID

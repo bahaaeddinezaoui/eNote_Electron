@@ -198,6 +198,45 @@ const studentCompletion = (student) => {
   return { filled, total, missing: total - filled, percent: Math.round((filled / total) * 100) }
 }
 
+// The name of each checklist item behind the completion figure. The roster
+// query returns the keys of the items still empty (INFO_MISSING); the wording
+// here is the field label the record editor uses, so the summary points at the
+// field the office has to fill rather than at an internal column name.
+const MISSING_FIELD_LABELS = {
+  firstName: 'First name',
+  lastName: 'Last name',
+  birthdate: 'Birthdate',
+  sex: 'Sex',
+  photo: 'Photo',
+  section: 'Section',
+  birthPlace: 'Birth Place',
+  personalPhone: 'Personal Phone',
+  nationalId: 'National Identification Number',
+  birthCertificate: 'Birth Certificate Number',
+  postalAccount: 'Postal Account Number',
+  baccalaureate: 'Baccalaureate Sub Number',
+  schoolSubCard: 'School Submission Card Number',
+  schoolSubDate: 'School Submission Date',
+  laptopSerial: 'Laptop Serial Number',
+  insuranceCard: 'Insurance Card Number',
+  militaryCard: 'Military Card Number',
+  militaryHelmet: 'Military Helmet Number',
+  bloodType: 'Blood Type',
+  height: 'Height (cm)',
+  weight: 'Weight (kg)',
+  healthStatus: 'Health Status',
+  speciality: 'Speciality',
+  academicLevel: 'Academic Level',
+  academicAverage: 'Academic Average',
+  recruitmentSource: 'Recruitment Source',
+  father: 'Father',
+  mother: 'Mother',
+  emergencyContact: 'Emergency contact',
+  hobbies: 'Hobbies',
+  combatOutfit: 'Combat Outfit',
+  paradeUniform: 'Parade Uniform'
+}
+
 // Student Directory: student list, registration (full info), edit, delete,
 // and section assignment. Formerly the standalone "Students" page; now hosted
 // inside the Student Records page.
@@ -1116,6 +1155,16 @@ const StudentDirectory = ({ user, onOpenRecord }) => {
     [students, inspectorId]
   )
 
+  // The fields this student's file still needs, by name. A roster row without
+  // the list (an older server, or a count that could not be made) leaves the
+  // section off entirely rather than claiming the file is complete.
+  const inspectorMissingFields = useMemo(() => {
+    if (!tracksCompletion || !inspectorStudent) return null
+    const keys = inspectorStudent.INFO_MISSING ?? inspectorStudent.info_missing
+    if (!Array.isArray(keys)) return null
+    return keys.map((key) => MISSING_FIELD_LABELS[key] || key)
+  }, [tracksCompletion, inspectorStudent])
+
   // Photos for the rows on screen and for the open record summary. The column
   // stores a path, so the main process turns each one into a data URL; results
   // are cached by person id, which keeps paging from re-reading the same file
@@ -1529,6 +1578,26 @@ const StudentDirectory = ({ user, onOpenRecord }) => {
                     </div>
                   ))}
                 </dl>
+
+                {inspectorMissingFields && (
+                  <>
+                    <div className="kicker border-y border-line bg-surface-muted px-3.5 py-1.5">{tr('Missing information')}</div>
+                    {inspectorMissingFields.length ? (
+                      <ul className="flex flex-wrap gap-1 px-3.5 py-2.5">
+                        {inspectorMissingFields.map((label) => (
+                          <li
+                            key={label}
+                            className="rounded-[3px] border border-line bg-surface px-1.5 py-0.5 text-[10.5px] leading-snug text-ink-2"
+                          >
+                            {tr(label)}
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="px-3.5 py-2.5 text-[11.5px] text-ink-3">{tr('No missing information')}</p>
+                    )}
+                  </>
+                )}
               </div>
 
               <div className="shrink-0 border-t border-line bg-surface-muted p-2">
