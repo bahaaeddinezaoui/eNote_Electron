@@ -683,7 +683,7 @@ const People = ({ user }) => {
                           ))}
                           {person.HAS_ACCOUNT && (
                             <span className="mono inline-flex items-center gap-1 rounded-[3px] border border-line-strong px-1.5 py-0.5 text-[9px] uppercase tracking-[0.06em] text-ink-3">
-                              <KeyRound size={8} /> {tr('Account')}
+                              <KeyRound size={8} /> {tr('Account')}{accountCount > 0 ? ` · ${accountCount}` : ''}
                             </span>
                           )}
                           {person.ROLE_CONFLICT && (canSettleRoles ? (
