@@ -1364,7 +1364,21 @@ const StudentDirectory = ({ user, onOpenRecord }) => {
           <span className="inline-flex flex-wrap items-center gap-x-2 gap-y-1">
             <span>{`${sortedStudents.length} ${tr(sortedStudents.length === 1 ? 'record' : 'records')}`}</span>
             {tracksCompletion && (missingInfoCount > 0 ? (
-              <StateMark tone="warn">{tr('Missing information: {count}', { count: missingInfoCount })}</StateMark>
+              // The figure is also the way in: pressing it narrows the register
+              // to exactly the students it counts, and pressing it again while
+              // that filter is on brings the whole register back.
+              <button
+                type="button"
+                onClick={() => { setInfoFilter(infoFilter === 'missing' ? '' : 'missing'); setPage(1) }}
+                aria-pressed={infoFilter === 'missing'}
+                title={infoFilter === 'missing'
+                  ? tr('Show every student again')
+                  : tr('Show only the students missing information')}
+                className={`inline-flex items-center gap-1.5 rounded-[3px] px-1 py-0.5 text-ink-2 hover:bg-surface-muted ${infoFilter === 'missing' ? 'bg-surface-muted' : ''}`}
+              >
+                <span className="h-[5px] w-[5px] shrink-0 rounded-full" style={{ background: 'var(--color-warning)' }} aria-hidden="true" />
+                {tr('Missing information: {count}', { count: missingInfoCount })}
+              </button>
             ) : (
               <StateMark tone="good">{tr('No missing information')}</StateMark>
             ))}
