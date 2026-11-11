@@ -242,7 +242,7 @@ import { getUpdateInfo, downloadUpdate, installUpdate } from './services/appUpda
 import { getAuditLog, exportAuditCsv, recordAudit, setAuditAppVersion, pruneExpiredAuditLogs } from './services/auditService'
 import { assertPageAccess, getLockedPages, setPageLocked, setPageLockRoles } from './services/pageLockService'
 import { getBetaTestVersions, getBetaTestReports, saveBetaTestReport } from './services/betaTestService'
-import { getAccounts, setAccountActive, updateAccount } from './services/accountService'
+import { getAccounts, setAccountActive, updateAccount, createAccount, createPersonWithAccount, searchAccountCandidates } from './services/accountService'
 import {
   getInbox,
   getInboxUnreadCount,
@@ -1613,6 +1613,23 @@ app.whenReady().then(async () => {
   // change in the activity log.
   ipcMain.handle('accounts:update', async (_, userId, targetUserId, data) => {
     return await updateAccount(userId, targetUserId, data || {})
+  })
+
+  // A new account for a person already on file: the dialog searches the roster
+  // and then chooses the account role. The service re-checks the manager role
+  // before it reads the roster or writes the account.
+  ipcMain.handle('accounts:searchCandidates', async (_, userId, term) => {
+    return await searchAccountCandidates(userId, term)
+  })
+
+  ipcMain.handle('accounts:create', async (_, userId, data) => {
+    return await createAccount(userId, data || {})
+  })
+
+  // Register a new person and create their account together: one transaction,
+  // so a failure leaves neither a person without a login nor the reverse.
+  ipcMain.handle('accounts:createWithPerson', async (_, userId, data) => {
+    return await createPersonWithAccount(userId, data || {})
   })
 
   // Inbox. Reading is open to the signed-in account that received the message;

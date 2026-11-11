@@ -426,6 +426,12 @@ const api = {
   getAccounts: (userId) => ipcRenderer.invoke('accounts:getAll', userId),
   setAccountActive: (userId, targetUserId, active) => ipcRenderer.invoke('accounts:setActive', userId, targetUserId, active),
   updateAccount: (userId, targetUserId, data) => ipcRenderer.invoke('accounts:update', userId, targetUserId, data),
+  // People an account may be created for, narrowed by name or person id, and
+  // the creation itself (Admin/Developer, re-checked in the service).
+  searchAccountCandidates: (userId, term) => ipcRenderer.invoke('accounts:searchCandidates', userId, term),
+  createAccount: (userId, data) => ipcRenderer.invoke('accounts:create', userId, data),
+  // Register a person and open their account in one step (Admin/Developer).
+  createPersonWithAccount: (userId, data) => ipcRenderer.invoke('accounts:createWithPerson', userId, data),
   getSecretaries: (userId) => ipcRenderer.invoke('secretaries:get', userId),
   updateSecretaryAccount: (userId, secretaryUserId, data) => ipcRenderer.invoke('secretaries:updateAccount', userId, secretaryUserId, data),
   setSecretaryPermissions: (userId, secretaryUserId, permissions) => ipcRenderer.invoke('secretaries:setPermissions', userId, secretaryUserId, permissions),

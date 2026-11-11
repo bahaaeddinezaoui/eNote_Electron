@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { formatDate as formatDateValue } from '../dateFormat'
 import {
   UserPlus, Edit2, Trash2, Check, Calendar, Shield, GraduationCap,
@@ -130,6 +131,7 @@ const displayName = (person) =>
   || `${tr('Person')} #${person.PERSON_ID}`
 
 const People = ({ user }) => {
+  const navigate = useNavigate()
   const [people, setPeople] = useState([])
   const [loading, setLoading] = useState(true)
   const [notice, setNotice] = useState(null)
@@ -312,6 +314,26 @@ const People = ({ user }) => {
     setPhotoError('')
     setIdError('')
     setShowModal(true)
+  }
+
+  // The account dialog lives on the Accounts page; a person card hands the
+  // record over instead of keeping a second copy of that dialog here.
+  const openAccountDialog = (person) => {
+    navigate('/accounts', {
+      state: {
+        createAccountFor: {
+          PERSON_ID: person.PERSON_ID,
+          PERSON_FIRST_NAME: person.PERSON_FIRST_NAME,
+          PERSON_FIRST_NAME_LA: person.PERSON_FIRST_NAME_LA,
+          PERSON_FIRST_NAME_AR: person.PERSON_FIRST_NAME_AR,
+          PERSON_LAST_NAME: person.PERSON_LAST_NAME,
+          PERSON_LAST_NAME_LA: person.PERSON_LAST_NAME_LA,
+          PERSON_LAST_NAME_AR: person.PERSON_LAST_NAME_AR,
+          PERSON_ROLE_CODES: person.PERSON_ROLE_CODES || [],
+          EXISTING_ACCOUNTS: person.EXISTING_ACCOUNTS || 0
+        }
+      }
+    })
   }
 
   const openEdit = async (person) => {
@@ -715,6 +737,15 @@ const People = ({ user }) => {
                     </dl>
 
                     <div className="flex items-center justify-end gap-1 border-t border-line pt-2">
+                      <button
+                        type="button"
+                        onClick={() => openAccountDialog(person)}
+                        className="inline-flex h-7 items-center gap-1 rounded-[3px] px-1.5 text-[10.5px] text-ink-3 transition-colors hover:bg-surface-muted hover:text-ink"
+                        title={tr('Create account')}
+                        aria-label={`${tr('Create account')}: ${displayName(person)}`}
+                      >
+                        <KeyRound size={11} aria-hidden="true" /> {tr('Create account')}
+                      </button>
                       <button
                         type="button"
                         onClick={() => openEdit(person)}

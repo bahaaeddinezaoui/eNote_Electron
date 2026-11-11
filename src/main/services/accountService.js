@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs'
-import { query } from '../db'
+import { query, withTransaction } from '../db'
 import { recordAudit } from './auditService'
+import { createPerson, grantPersonRole, PERSON_ROLE_CODES } from './personService'
 import {
   PASSWORD_MAX_BYTES,
   isPasswordValid,
@@ -21,6 +22,31 @@ const MANAGER_ROLES = ['ADMIN', 'DEVELOPER']
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const MAX_USERNAME_LENGTH = 60
 const MAX_EMAIL_LENGTH = 120
+
+// The fields a new account always needs, validated in one place so the
+// account-only path and the register-a-person path cannot drift apart.
+function readNewAccountFields(data) {
+  const username = String(data.username ?? '').trim()
+  const email = String(data.email ?? '').trim()
+  const password = String(data.password ?? '')
+  const roleCode = String(data.roleCode ?? '').trim().toUpperCase()
+
+  if (!username) throw new Error('Username is required.')
+  if (username.length > MAX_USERNAME_LENGTH) {
+    throw new Error(`Username is too long (max ${MAX_USERNAME_LENGTH} characters).`)
+  }
+  if (email && !EMAIL_PATTERN.test(email)) throw new Error('Enter a valid email address.')
+  if (email.length > MAX_EMAIL_LENGTH) {
+    throw new Error(`Email is too long (max ${MAX_EMAIL_LENGTH} characters).`)
+  }
+  if (!isPasswordValid(password)) throw new Error(passwordPolicyMessage())
+  if (Buffer.byteLength(password, 'utf8') > PASSWORD_MAX_BYTES) {
+    throw new Error(passwordBytesMessage())
+  }
+  if (!roleCode) throw new Error('Choose the account role.')
+
+  return { username, email, password, roleCode }
+}
 
 // The acting account, with its roles. A deactivated account may not manage
 // accounts even from a session that is still open, exactly like the other
@@ -267,5 +293,272 @@ export async function updateAccount(userId, targetUserId, data = {}) {
     email: nextEmail,
     roleCode: nextRoleCode,
     passwordChanged: !!password
+  }
+}
+
+// The people an account may be created for, narrowed by name, name fragment or
+// person id. A person can hold more than one account on purpose (a teacher who
+// is also a director, a replacement username), so nobody is excluded here: the
+// row carries how many accounts already exist and the dialog reports it.
+const MAX_PERSON_RESULTS = 30
+
+export async function searchAccountCandidates(userId, term) {
+  await requireManagerId(userId)
+
+  const text = String(term ?? '').trim()
+  const personId = /^\d+$/.test(text) ? parseInt(text, 10) : null
+  const like = `%${text.replace(/[%_]/g, m => `\\${m}`)}%`
+
+  const res = await query(
+    `SELECT p.person_id,
+            p.person_first_name_la, p.person_last_name_la,
+            p.person_first_name_ar, p.person_last_name_ar,
+            COALESCE(p.person_first_name_la, p.person_first_name_ar) AS person_first_name,
+            COALESCE(p.person_last_name_la, p.person_last_name_ar) AS person_last_name,
+            COALESCE(pr.role_codes, '{}') AS person_role_codes,
+            COALESCE(acc.account_count, 0) AS existing_accounts
+       FROM person p
+       LEFT JOIN LATERAL (
+         SELECT array_agg(DISTINCT r.role_code ORDER BY r.role_code) AS role_codes
+           FROM person_has_role phr
+           JOIN "role" r ON r.role_id = phr.role_id
+          WHERE phr.person_id = p.person_id
+            AND phr.role_end_date IS NULL
+       ) pr ON TRUE
+       LEFT JOIN LATERAL (
+         SELECT count(*)::int AS account_count
+           FROM "user" u
+          WHERE u.person_id = p.person_id
+       ) acc ON TRUE
+      WHERE $1::text = ''
+         OR p.person_first_name_la ILIKE $2
+         OR p.person_first_name_ar ILIKE $2
+         OR p.person_last_name_la ILIKE $2
+         OR p.person_last_name_ar ILIKE $2
+         OR (COALESCE(p.person_first_name_la, p.person_first_name_ar, '') || ' ' ||
+             COALESCE(p.person_last_name_la, p.person_last_name_ar, '')) ILIKE $2
+         OR ($3::bigint IS NOT NULL AND p.person_id = $3::bigint)
+      ORDER BY COALESCE(p.person_last_name_la, p.person_last_name_ar) NULLS LAST,
+               COALESCE(p.person_first_name_la, p.person_first_name_ar) NULLS LAST,
+               p.person_id
+      LIMIT ${MAX_PERSON_RESULTS}`,
+    [text, like, personId]
+  )
+
+  return {
+    success: true,
+    people: res.data || [],
+    limited: (res.data || []).length === MAX_PERSON_RESULTS
+  }
+}
+
+// Create an account for a person who is already on file. The role is chosen
+// here — it is what the login may open — and it is also recorded on the
+// person's own record, so the roster and the account describe the same person.
+// The account starts active; its records belong to the person and are not
+// touched. The same password policy as the sign-in form applies, and the
+// username and email are unique across accounts, never across people.
+export async function createAccount(userId, data = {}) {
+  const actorId = await requireManagerId(userId)
+
+  const personId = parseInt(data.personId, 10)
+  if (!personId) throw new Error('Choose the person this account signs in as.')
+
+  const { username, email, password, roleCode } = readNewAccountFields(data)
+
+  const personRes = await query(
+    `SELECT p.person_id,
+            COALESCE(p.person_first_name_la, p.person_first_name_ar) AS person_first_name,
+            COALESCE(p.person_last_name_la, p.person_last_name_ar) AS person_last_name
+       FROM person p
+      WHERE p.person_id = $1`,
+    [personId]
+  )
+  const person = personRes.data?.[0]
+  if (!person) throw new Error('That person no longer exists.')
+
+  // The renderer sends a role code; the id is resolved here so it can never
+  // supply a role_id that does not exist.
+  const roleRes = await query('SELECT role_id, role_code FROM "role" WHERE role_code = $1', [roleCode])
+  const role = roleRes.data?.[0]
+  if (!role) throw new Error('Choose a valid account role.')
+
+  const nextEmail = email || null
+
+  // Uniqueness is checked here so a duplicate reads as a sentence rather than
+  // as a constraint violation; the database remains the final word.
+  const takenUsername = await query(
+    'SELECT 1 FROM "user" WHERE LOWER(user_username) = LOWER($1)',
+    [username]
+  )
+  if ((takenUsername.data || []).length > 0) throw new Error('This username is already taken.')
+
+  if (nextEmail) {
+    const takenEmail = await query(
+      'SELECT 1 FROM "user" WHERE user_email IS NOT NULL AND LOWER(user_email) = LOWER($1)',
+      [nextEmail]
+    )
+    if ((takenEmail.data || []).length > 0) {
+      throw new Error('This email address is already used by another account.')
+    }
+  }
+
+  const hash = await bcrypt.hash(password, 10)
+
+  let newUserId
+  try {
+    const inserted = await query(
+      `INSERT INTO "user" (person_id, user_username, user_password_hash, user_email, role_id, is_active)
+       VALUES ($1, $2, $3, $4, $5, TRUE)
+       RETURNING user_id`,
+      [personId, username, hash, nextEmail, role.ROLE_ID]
+    )
+    newUserId = inserted.data?.[0]?.USER_ID
+  } catch (error) {
+    if (error?.code === '23505') {
+      throw new Error('This username or email address is already used by another account.')
+    }
+    throw error
+  }
+  if (!newUserId) throw new Error('The account could not be created.')
+
+  // The person record and the account answer two different questions, but the
+  // role they name should agree. If the person already holds it this changes
+  // nothing; if the schema refuses it, the new account is rolled back rather
+  // than left describing somebody the roster does not.
+  if (PERSON_ROLE_CODES.includes(roleCode)) {
+    try {
+      await grantPersonRole(personId, roleCode)
+    } catch (error) {
+      await query('DELETE FROM "user" WHERE user_id = $1', [newUserId]).catch(() => {})
+      throw error
+    }
+  }
+
+  const name = [person.PERSON_FIRST_NAME, person.PERSON_LAST_NAME].filter(Boolean).join(' ')
+    || username
+
+  await recordAudit({
+    actorUserId: actorId,
+    action: 'account.create',
+    entityType: 'user',
+    entityId: newUserId,
+    entityLabel: name,
+    detail: { username, roleCode, personId }
+  })
+
+  return {
+    success: true,
+    userId: newUserId,
+    personId,
+    username,
+    email: nextEmail,
+    roleCode,
+    name
+  }
+}
+
+// Register a person who is not in the registry yet and create their account in
+// a single transaction. In the middle of this the registry is briefly
+// inconsistent (a person with no login), so a failure must leave neither half
+// behind: the transaction either commits both rows or neither.
+//
+// The person fields are the same ones the Personnel page collects; the role is
+// the account's role and is also recorded on the person, exactly as it is when
+// an account is created for somebody already on file.
+export async function createPersonWithAccount(userId, data = {}) {
+  const actorId = await requireManagerId(userId)
+
+  const person = data.person && typeof data.person === 'object' ? data.person : {}
+  const firstName = String(person.PERSON_FIRST_NAME_LA ?? '').trim()
+  const lastName = String(person.PERSON_LAST_NAME_LA ?? '').trim()
+  if (!firstName) throw new Error('The first name is required.')
+  if (!lastName) throw new Error('The last name is required.')
+
+  const { username, email, password, roleCode } = readNewAccountFields(data)
+
+  const roleRes = await query('SELECT role_id, role_code FROM "role" WHERE role_code = $1', [roleCode])
+  const role = roleRes.data?.[0]
+  if (!role) throw new Error('Choose a valid account role.')
+
+  // Checked before the transaction, so a duplicate reads as a sentence and no
+  // person row is created only to be rolled back. The INSERT remains the final
+  // word if two administrators save at the same moment.
+  const takenUsername = await query(
+    'SELECT 1 FROM "user" WHERE LOWER(user_username) = LOWER($1)',
+    [username]
+  )
+  if ((takenUsername.data || []).length > 0) throw new Error('This username is already taken.')
+
+  if (email) {
+    const takenEmail = await query(
+      'SELECT 1 FROM "user" WHERE user_email IS NOT NULL AND LOWER(user_email) = LOWER($1)',
+      [email]
+    )
+    if ((takenEmail.data || []).length > 0) {
+      throw new Error('This email address is already used by another account.')
+    }
+  }
+
+  const hash = await bcrypt.hash(password, 10)
+  const nextEmail = email || null
+
+  let creation
+  try {
+    creation = await withTransaction(async (tx) => {
+      const createdPerson = await createPerson(person, tx)
+      const personId = createdPerson?.PERSON_ID
+      if (!personId) throw new Error('The person could not be registered.')
+
+      // A duplicate here is a username or an email, never the person id: the
+      // person was just inserted in this transaction.
+      let inserted
+      try {
+        inserted = await tx(
+          `INSERT INTO "user" (person_id, user_username, user_password_hash, user_email, role_id, is_active)
+           VALUES ($1, $2, $3, $4, $5, TRUE)
+           RETURNING user_id`,
+          [personId, username, hash, nextEmail, role.ROLE_ID]
+        )
+      } catch (error) {
+        if (error?.code === '23505') {
+          throw new Error('This username or email address is already used by another account.')
+        }
+        throw error
+      }
+
+      const newUserId = inserted.data?.[0]?.USER_ID
+      if (!newUserId) throw new Error('The account could not be created.')
+
+      if (PERSON_ROLE_CODES.includes(roleCode)) await grantPersonRole(personId, roleCode, tx)
+
+      return { personId, newUserId }
+    })
+  } catch (error) {
+    // The only unique constraint this transaction can still violate is the
+    // person key, which two administrators can race on even after the check.
+    if (error?.code === '23505') throw new Error('A person with this ID already exists.')
+    throw error
+  }
+
+  const name = [firstName, lastName].filter(Boolean).join(' ')
+
+  await recordAudit({
+    actorUserId: actorId,
+    action: 'account.create',
+    entityType: 'user',
+    entityId: creation.newUserId,
+    entityLabel: name,
+    detail: { username, roleCode, personId: creation.personId, personCreated: true }
+  })
+
+  return {
+    success: true,
+    userId: creation.newUserId,
+    personId: creation.personId,
+    username,
+    email: nextEmail,
+    roleCode,
+    name
   }
 }

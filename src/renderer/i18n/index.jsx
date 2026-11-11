@@ -50,6 +50,7 @@ import { ar46 } from './ar-46'
 import { ar47 } from './ar-47'
 import { ar48 } from './ar-48'
 import { ar49 } from './ar-49'
+import { ar50 } from './ar-50'
 import { fr1 } from './fr-1'
 import { fr2 } from './fr-2'
 import { fr3 } from './fr-3'
@@ -102,6 +103,7 @@ import { fr49 } from './fr-49'
 import { fr50 } from './fr-50'
 import { fr51 } from './fr-51'
 import { fr52 } from './fr-52'
+import { fr53 } from './fr-53'
 
 // Interface language is a device-local choice stored in localStorage, exactly
 // like the light/dark theme. It drives three things:
@@ -117,8 +119,8 @@ export const LANGUAGES = [
 ]
 
 const DICTIONARIES = {
-  ar: { ...ar, ...ar1, ...ar2, ...ar3, ...ar4, ...ar5, ...ar6, ...ar7, ...ar8, ...ar9, ...ar10, ...ar11, ...ar12, ...ar13, ...ar14, ...ar15, ...ar16, ...ar17, ...ar18, ...ar19, ...ar20, ...ar21, ...ar22, ...ar23, ...ar24, ...ar25, ...ar26, ...ar27, ...ar28, ...ar29, ...ar30, ...ar31, ...ar32, ...ar33, ...ar34, ...ar35, ...ar36, ...ar37, ...ar38, ...ar39, ...ar40, ...ar41, ...ar42, ...ar43, ...ar44, ...ar45, ...ar46, ...ar47, ...ar48, ...ar49 },
-  fr: { ...fr, ...fr1, ...fr2, ...fr3, ...fr4, ...fr5, ...fr6, ...fr7, ...fr8, ...fr9, ...fr10, ...fr11, ...fr12, ...fr13, ...fr14, ...fr15, ...fr16, ...fr17, ...fr18, ...fr19, ...fr20, ...fr21, ...fr22, ...fr23, ...fr24, ...fr25, ...fr26, ...fr27, ...fr28, ...fr29, ...fr30, ...fr31, ...fr32, ...fr33, ...fr34, ...fr35, ...fr36, ...fr37, ...fr38, ...fr39, ...fr40, ...fr41, ...fr42, ...fr43, ...fr44, ...fr45, ...fr46, ...fr47, ...fr48, ...fr49, ...fr50, ...fr51, ...fr52 }
+  ar: { ...ar, ...ar1, ...ar2, ...ar3, ...ar4, ...ar5, ...ar6, ...ar7, ...ar8, ...ar9, ...ar10, ...ar11, ...ar12, ...ar13, ...ar14, ...ar15, ...ar16, ...ar17, ...ar18, ...ar19, ...ar20, ...ar21, ...ar22, ...ar23, ...ar24, ...ar25, ...ar26, ...ar27, ...ar28, ...ar29, ...ar30, ...ar31, ...ar32, ...ar33, ...ar34, ...ar35, ...ar36, ...ar37, ...ar38, ...ar39, ...ar40, ...ar41, ...ar42, ...ar43, ...ar44, ...ar45, ...ar46, ...ar47, ...ar48, ...ar49, ...ar50 },
+  fr: { ...fr, ...fr1, ...fr2, ...fr3, ...fr4, ...fr5, ...fr6, ...fr7, ...fr8, ...fr9, ...fr10, ...fr11, ...fr12, ...fr13, ...fr14, ...fr15, ...fr16, ...fr17, ...fr18, ...fr19, ...fr20, ...fr21, ...fr22, ...fr23, ...fr24, ...fr25, ...fr26, ...fr27, ...fr28, ...fr29, ...fr30, ...fr31, ...fr32, ...fr33, ...fr34, ...fr35, ...fr36, ...fr37, ...fr38, ...fr39, ...fr40, ...fr41, ...fr42, ...fr43, ...fr44, ...fr45, ...fr46, ...fr47, ...fr48, ...fr49, ...fr50, ...fr51, ...fr52, ...fr53 }
 }
 const STORAGE_KEY = 'enote-language'
 

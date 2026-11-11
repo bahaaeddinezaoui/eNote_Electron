@@ -7,6 +7,7 @@ export const AUDIT_ACTIONS = [
   { code: 'account.unlock', label: 'Account restored', group: 'Accounts' },
   { code: 'account.password_reset', label: 'Password reset by an administrator', group: 'Accounts' },
   { code: 'account.update', label: 'Account updated', group: 'Accounts' },
+  { code: 'account.create', label: 'Account created', group: 'Accounts' },
   { code: 'account.password_change', label: 'Password changed', group: 'Accounts' },
   { code: 'account.username_change', label: 'Username changed', group: 'Accounts' },
   { code: 'settings.option_change', label: 'Setting changed', group: 'Settings' },

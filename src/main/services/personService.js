@@ -35,8 +35,8 @@ function sanitizePersonData(personData) {
 // appear in Student Records, the rewards and punishments pickers, etc. The row is keyed by
 // the person it belongs to, and its birth date is taken from the person record
 // rather than passed in, so assigning the role is enough on its own.
-async function bootstrapStudentDetail(personId) {
-  await query(
+async function bootstrapStudentDetail(personId, run = query) {
+  await run(
     `INSERT INTO student_detail (person_id, student_birth_date)
      VALUES ($1, (SELECT person_birthdate FROM person WHERE person_id = $1))
      ON CONFLICT (person_id) DO NOTHING`,
@@ -189,6 +189,7 @@ export async function getPersonnel() {
            COALESCE(pr.role_codes, '{}') AS PERSON_ROLE_CODES,
            COALESCE(ur.role_codes, '{}') AS ACCOUNT_ROLE_CODES,
            (ur.user_id IS NOT NULL) AS HAS_ACCOUNT,
+           COALESCE(ur.account_count, 0) AS EXISTING_ACCOUNTS,
            -- The department belongs to the TEACHER role row (person_has_role),
            -- not to the account: a teacher without a login still belongs to a
            -- department, and an account can carry only one role anyway.
@@ -210,7 +211,8 @@ export async function getPersonnel() {
            AND phr.role_end_date IS NULL
       ) pr ON TRUE
       LEFT JOIN LATERAL (
-        SELECT array_agg(DISTINCT r.role_code) AS role_codes, max(u.user_id) AS user_id
+        SELECT array_agg(DISTINCT r.role_code) AS role_codes, max(u.user_id) AS user_id,
+               count(*)::int AS account_count
           FROM "user" u
           LEFT JOIN "role" r ON r.role_id = u.role_id
          WHERE u.person_id = p.person_id
@@ -294,22 +296,26 @@ async function requireAdminId(userId) {
 // end date. Assigning a role somebody already holds changes nothing, and the
 // two roles are applied independently, so a person can hold both at once
 // without either assignment touching the other.
-export async function assignPersonRole(userId, personId, roleCode) {
-  const actorId = await requireAdminId(userId)
+//
+// This is the bare write, with no permission check: the personnel page checks
+// the Admin role itself before calling it, and account creation uses it to
+// record the account's role on the person too, so the two stores cannot
+// disagree about who somebody is.
+export async function grantPersonRole(personId, roleCode, run = query) {
   const code = assertKnownRole(roleCode)
   const targetId = parseInt(personId, 10)
   if (!targetId) throw new Error('Select the person whose role you want to change.')
 
   // The person must exist: a sentence beats the foreign-key error the INSERT
   // would raise.
-  const target = await query('SELECT 1 FROM person WHERE person_id = $1', [targetId])
+  const target = await run('SELECT 1 FROM person WHERE person_id = $1', [targetId])
   if (target.rowCount === 0) throw new Error('That person no longer exists.')
 
   // The NOT EXISTS keeps a second active row out on a database that predates
   // person_has_role_active_role_uniq; the ON CONFLICT covers the index once it
   // is in place.
   try {
-    await query(
+    await run(
       `INSERT INTO person_has_role (person_id, role_id)
        SELECT $1, r.role_id
          FROM role r
@@ -335,7 +341,15 @@ export async function assignPersonRole(userId, personId, roleCode) {
 
   // Enrolling somebody also gives them their student file, so they appear in
   // Student Records and the rewards and punishments pickers straight away.
-  if (code === 'STUDENT') await bootstrapStudentDetail(targetId)
+  if (code === 'STUDENT') await bootstrapStudentDetail(targetId, run)
+
+  return code
+}
+
+export async function assignPersonRole(userId, personId, roleCode) {
+  const actorId = await requireAdminId(userId)
+  const code = await grantPersonRole(personId, roleCode)
+  const targetId = parseInt(personId, 10)
 
   await recordAudit({
     actorUserId: actorId,
@@ -431,7 +445,7 @@ export async function setPersonDepartment(userId, personId, departmentId) {
   return { success: true }
 }
 
-export async function createPerson(personData) {
+export async function createPerson(personData, run = query) {
   const lowerCaseData = sanitizePersonData(normalizeNameKeys(normalizeLatinNames(personData)))
 
   // is_student / is_teacher were never columns: what a person is in the school
@@ -458,7 +472,7 @@ export async function createPerson(personData) {
 
   // The id is the primary key, so a number already in use is refused by the
   // database; asking first lets the message name the field that is the problem.
-  const taken = await query('SELECT 1 FROM person WHERE person_id = $1', [lowerCaseData.person_id])
+  const taken = await run('SELECT 1 FROM person WHERE person_id = $1', [lowerCaseData.person_id])
   if (taken.data?.length) throw new Error('A person with this ID already exists.')
 
   const columns = Object.keys(lowerCaseData).join(', ')
@@ -466,7 +480,7 @@ export async function createPerson(personData) {
   const values = Object.values(lowerCaseData)
 
   const sql = `INSERT INTO person (${columns}) VALUES (${placeholders}) RETURNING person_id`
-  const result = await query(sql, values)
+  const result = await run(sql, values)
 
   return { ...personData, PERSON_ID: result.data?.[0]?.PERSON_ID }
 }
