@@ -1,0 +1,72 @@
+% MPD détaillé, généré depuis le schéma PostgreSQL.
+\begin{tikzpicture}[font=\scriptsize]
+\tikzset{ent/.style={draw=black!65, rounded corners=2pt, fill=white, inner sep=2pt, align=left},
+  lien/.style={-Latex, draw=black!55, line width=0.4pt}}
+\node[ent, anchor=north west] (major) at (0,0) {%
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.85cm}>{\raggedright\arraybackslash}p{0.9cm}@{}}
+\rowcolor{blue!8}\multicolumn{2}{@{}l}{\tiny\textbf{major}}\\[1pt]
+{\tiny PK major\_\allowbreak{}id} & {\tiny int}\\
+{\tiny FK major\_\allowbreak{}category\_\allowbreak{}id} & {\tiny int}\\
+{\tiny FK major\_\allowbreak{}teacher\_\allowbreak{}id} & {\tiny bigint}\\
+{\tiny major\_\allowbreak{}code} & {\tiny varchar}\\
+{\tiny major\_\allowbreak{}label\_\allowbreak{}en} & {\tiny varchar}\\
+{\tiny major\_\allowbreak{}label\_\allowbreak{}ar} & {\tiny varchar}\\
+\end{tabular}};
+\node[ent, anchor=north west] (teaching_group) at (4.8,0) {%
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.85cm}>{\raggedright\arraybackslash}p{0.9cm}@{}}
+\rowcolor{blue!8}\multicolumn{2}{@{}l}{\tiny\textbf{teaching\_\allowbreak{}group}}\\[1pt]
+{\tiny PK teaching\_\allowbreak{}group\_\allowbreak{}id} & {\tiny int}\\
+{\tiny FK promotion\_\allowbreak{}id} & {\tiny int}\\
+{\tiny FK major\_\allowbreak{}id} & {\tiny int}\\
+{\tiny FK study\_\allowbreak{}semester\_\allowbreak{}id} & {\tiny int}\\
+{\tiny FK teaching\_\allowbreak{}category\_\allowbreak{}id} & {\tiny int}\\
+{\tiny teaching\_\allowbreak{}group\_\allowbreak{}code} & {\tiny varchar}\\
+{\tiny teaching\_\allowbreak{}group\_\allowbreak{}label\_\allowbreak{}en} & {\tiny varchar}\\
+\end{tabular}};
+\node[ent, anchor=north west] (study_session) at (9.6,0) {%
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.85cm}>{\raggedright\arraybackslash}p{0.9cm}@{}}
+\rowcolor{blue!8}\multicolumn{2}{@{}l}{\tiny\textbf{study\_\allowbreak{}session}}\\[1pt]
+{\tiny PK study\_\allowbreak{}session\_\allowbreak{}id} & {\tiny int}\\
+{\tiny FK classroom\_\allowbreak{}id} & {\tiny int}\\
+{\tiny FK study\_\allowbreak{}session\_\allowbreak{}type\_\allowbreak{}id} & {\tiny int}\\
+{\tiny FK major\_\allowbreak{}id} & {\tiny int}\\
+{\tiny FK teaching\_\allowbreak{}group\_\allowbreak{}id} & {\tiny int}\\
+{\tiny FK instructor\_\allowbreak{}id} & {\tiny bigint}\\
+{\tiny FK study\_\allowbreak{}day\_\allowbreak{}id} & {\tiny int}\\
+{\tiny study\_\allowbreak{}session\_\allowbreak{}start\_\allowbreak{}time} & {\tiny time}\\
+\end{tabular}};
+\node[ent, anchor=north west] (examination) at (0,-4.1) {%
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.85cm}>{\raggedright\arraybackslash}p{0.9cm}@{}}
+\rowcolor{blue!8}\multicolumn{2}{@{}l}{\tiny\textbf{examination}}\\[1pt]
+{\tiny PK examination\_\allowbreak{}id} & {\tiny int}\\
+{\tiny FK major\_\allowbreak{}id} & {\tiny int}\\
+{\tiny FK study\_\allowbreak{}semester\_\allowbreak{}id} & {\tiny int}\\
+{\tiny FK examination\_\allowbreak{}type\_\allowbreak{}id} & {\tiny int}\\
+{\tiny examination\_\allowbreak{}code} & {\tiny varchar}\\
+{\tiny examination\_\allowbreak{}start\_\allowbreak{}datetime} & {\tiny ts}\\
+{\tiny examination\_\allowbreak{}end\_\allowbreak{}datetime} & {\tiny ts}\\
+\end{tabular}};
+\node[ent, anchor=north west] (absence_justification) at (4.8,-4.1) {%
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.85cm}>{\raggedright\arraybackslash}p{0.9cm}@{}}
+\rowcolor{blue!8}\multicolumn{2}{@{}l}{\tiny\textbf{absence\_\allowbreak{}justification}}\\[1pt]
+{\tiny PK absence\_\allowbreak{}justification\_\allowbreak{}id} & {\tiny int}\\
+{\tiny absence\_\allowbreak{}justification\_\allowbreak{}code} & {\tiny varchar}\\
+{\tiny absence\_\allowbreak{}justification\_\allowbreak{}label\_\allowbreak{}en} & {\tiny varchar}\\
+{\tiny absence\_\allowbreak{}justification\_\allowbreak{}label\_\allowbreak{}ar} & {\tiny varchar}\\
+\end{tabular}};
+\node[ent, anchor=north west] (student_gets_absent) at (9.6,-4.1) {%
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.85cm}>{\raggedright\arraybackslash}p{0.9cm}@{}}
+\rowcolor{blue!8}\multicolumn{2}{@{}l}{\tiny\textbf{student\_\allowbreak{}gets\_\allowbreak{}absent}}\\[1pt]
+{\tiny PK/FK person\_\allowbreak{}id} & {\tiny bigint}\\
+{\tiny PK/FK study\_\allowbreak{}session\_\allowbreak{}id} & {\tiny int}\\
+{\tiny FK absence\_\allowbreak{}justification\_\allowbreak{}id} & {\tiny int}\\
+{\tiny FK per\_\allowbreak{}person\_\allowbreak{}id} & {\tiny bigint}\\
+{\tiny teacher\_\allowbreak{}absence\_\allowbreak{}note} & {\tiny text}\\
+\end{tabular}};
+\draw[lien] (major.east) -- node[above, font=\tiny, inner sep=1pt] {N} (teaching_group.west);
+\draw[lien] (teaching_group.east) -- node[above, font=\tiny, inner sep=1pt] {N} (study_session.west);
+\draw[lien] (study_session.south) -- node[right, font=\tiny, inner sep=1pt] {N} (student_gets_absent.north);
+\draw[lien] (student_gets_absent.west) -- node[above, font=\tiny, inner sep=1pt] {N} (absence_justification.east);
+\draw[lien] (major.south) -- node[right, font=\tiny, inner sep=1pt] {N} (examination.north);
+\draw[lien] (study_session.north) -- ++(0,0.55) -| node[pos=0.25, above, font=\tiny, inner sep=1pt] {N} (major.north);
+\end{tikzpicture}

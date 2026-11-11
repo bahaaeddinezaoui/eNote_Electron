@@ -1,0 +1,63 @@
+\chapter{Annexes}
+
+\section{Arborescence des sources}
+\begin{verbatim}
+iStudy/
+  src/
+    main/                 processus principal (Electron + accès PostgreSQL)
+      services/           une quarantaine de services métier
+      db.js               pool, transactions, LISTEN/NOTIFY
+      localization.js     substitution des libellés selon la langue
+      labelCatalog.js     résolution des alias non variantes
+    preload/index.js      pont contextBridge (API exposée à l'interface)
+    renderer/             interface React 19
+      components/         écrans et composants partagés
+      i18n/               dictionnaires anglais, arabe, français
+      index.css           jetons de conception et styles
+    shared/               règles communes (mots de passe, semaine, noms)
+  deploy/
+    server/               scripts SQL et PowerShell du serveur
+    client/               préréglage de connexion des postes
+    build-offline.ps1     construction des paquets hors ligne
+  build/                  icônes et polices embarquées
+  scripts/                utilitaires (icônes, migration des médias)
+\end{verbatim}
+
+\section{Variables d'environnement du client}
+Les variables suivantes remplacent le préréglage de connexion, ce qui permet à un technicien de
+corriger un hôte sans modifier de fichier :
+\begin{verbatim}
+ENOTE_DB_HOST, ENOTE_DB_PORT, ENOTE_DB_NAME,
+ENOTE_DB_USER, ENOTE_DB_PASSWORD,
+ENOTE_RESOURCE_ROOT, ENOTE_DEPLOYMENT_FILE,
+ENOTE_SMB_USER, ENOTE_SMB_PASSWORD
+\end{verbatim}
+
+\section{Commandes utiles}
+\begin{verbatim}
+npm ci                     installation reproductible
+npm run dev                lancement en développement
+npm run build              construction des trois bundles
+npm run build:win          installateur Windows (NSIS + portable)
+npm run build:linux        AppImage, deb et archive Linux
+npm run migrate:resources  migration des médias vers le partage
+\end{verbatim}
+Côté serveur :
+\begin{verbatim}
+psql -U postgres -f deploy/server/01-init-enote.sql
+psql -U postgres -d eNote -f deploy/server/02-bootstrap-admin.sql
+powershell -File deploy/server/setup-firewall.ps1
+powershell -File deploy/server/setup-share.ps1 -SharePath C:\eNoteFiles
+powershell -File deploy/server/backup-db.ps1 -BackupDir D:\Backups\eNote
+\end{verbatim}
+
+\section{Éléments à compléter}
+\begin{itemize}
+    \item Identité de l'établissement : sigle, nom complet, ministère de tutelle, direction de
+          rattachement et service auteur (page de garde et en-tête) ;
+    \item Année de rédaction du document ;
+    \item Caractéristiques du poste de développement (modèle, processeur, mémoire, carte graphique) ;
+    \item Figures \texttt{images/mpd.pdf} et \texttt{images/usecase.pdf} : modèle physique de données
+          et diagramme de cas d'utilisation ;
+    \item Captures d'écran des fonctionnalités, nommées comme indiqué sous chaque figure.
+\end{itemize}

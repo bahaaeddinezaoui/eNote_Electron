@@ -1,0 +1,231 @@
+\chapter{Réalisation de l'Application}
+
+\section{Introduction}
+Ce chapitre décrit la réalisation technique de \appname. Il présente l'environnement de développement,
+puis l'architecture de la solution : le processus principal qui dialogue avec PostgreSQL, le pont de
+communication qui expose les opérations à l'interface, et l'interface elle-même. Les sections suivantes
+détaillent la sécurité, l'internationalisation, la génération des rapports et le type d'application
+retenu.
+
+\section{Environnement et Outils de Développement}
+L'application a été développée dans l'environnement suivant :
+\begin{itemize}
+    \item Poste de développement : % À COMPLÉTER : modèle, processeur, mémoire, carte graphique
+          poste de travail Windows x64 (caractéristiques matérielles à compléter) ;
+    \item Système d'exploitation : Windows pour la compilation des paquets Windows, Linux x64 pour la
+          compilation des paquets AppImage et Debian ;
+    \item Environnement d'exécution : Node.js 22 ou supérieur pour la construction du client.
+\end{itemize}
+Les outils suivants ont été utilisés :
+\begin{itemize}
+    \item \textbf{Visual Studio Code} : éditeur de code, avec la configuration de projet présente dans
+          le dossier \texttt{.vscode} ;
+    \item \textbf{Electron 45} : moteur d'application de bureau, qui fournit la fenêtre, le moteur de
+          rendu Chromium et l'accès au système de fichiers ;
+    \item \textbf{Electron-Vite 5} et \textbf{Vite 7} : chaîne de construction des trois bundles
+          (processus principal, pont de préchargement, interface) ;
+    \item \textbf{React 19} et \textbf{React Router 7} : construction de l'interface et navigation ;
+    \item \textbf{Tailwind CSS 4} : système de styles et jetons de conception ;
+    \item \textbf{PostgreSQL 15 ou 16} : \ac{SGBD} relationnel qui héberge la base \texttt{eNote} ;
+    \item \textbf{node-postgres 8} : pilote de connexion entre le processus principal et PostgreSQL ;
+    \item \textbf{bcryptjs 3} : hachage des mots de passe ;
+    \item \textbf{Electron Builder 26} : fabrication des installateurs Windows, AppImage, paquet Debian
+          et archive Linux ;
+    \item \textbf{lucide-react} et \textbf{Radix Dialog} : jeu d'icônes et composant de dialogue
+          accessible.
+\end{itemize}
+
+\section{Architecture de l'Application}
+L'architecture générale s'articule autour de l'infrastructure backend, de l'architecture frontend et de
+spécifications techniques. Elle repose sur le modèle de processus d'Electron : une fenêtre ne parle
+jamais directement à la base de données ; elle appelle une opération exposée par le pont de
+préchargement, que le processus principal exécute après avoir vérifié les droits de l'appelant.
+
+\subsection{Infrastructure Backend}
+\subsubsection{Technologies Fondamentales}
+Le processus principal est écrit en JavaScript moderne (modules \ac{ESM}, exécutés par Node.js intégré à
+Electron). Il regroupe une quarantaine de services métier : authentification, personnes, profil de
+l'élève, structure académique, emploi du temps, absences, observations, récompenses et sanctions,
+examens, notes, documents, bibliothèque documentaire (catalogue, catégories, revue), messagerie,
+notifications, rapports, statistiques, journal d'activité, administration des comptes et mise à jour du
+client. Chaque service interroge PostgreSQL par des
+requêtes paramétrées et renvoie des lignes normalisées en majuscules, ce qui donne aux services et à
+l'interface un contrat stable.
+
+La couche d'accès aux données gère un pool de connexions, ouvre une transaction pour les opérations qui
+touchent plusieurs tables et relance la connexion enregistrée lorsque le serveur PostgreSQL redémarre.
+Elle utilise également le mécanisme \texttt{LISTEN}/\texttt{NOTIFY} de PostgreSQL : un déclencheur écrit
+une notification, le processus principal reçoit l'avis sur une connexion dédiée et pousse aussitôt
+l'événement à la fenêtre, sans interrogation périodique.
+
+\subsubsection{Architecture de la Base de Données}
+La base s'appelle \texttt{eNote}. Elle est créée en encodage \ac{UTF-8} et appartient à un rôle
+applicatif dédié, \texttt{enote\_app}, distinct du superutilisateur \texttt{postgres}. Le schéma
+\texttt{public} contient 111 tables, une vue, 157 clés étrangères, 76 séquences, 34 déclencheurs et
+51 fonctions. Les déclencheurs assurent l'horodatage des écritures, la production des notifications
+et la tenue de compteurs dénormalisés ; les fonctions portent les règles
+qui doivent s'appliquer quel que soit le chemin d'écriture.
+
+Le déploiement de référence place le serveur à l'adresse \texttt{192.214.23.15}, sur le port
+\texttt{5432}, et les fichiers partagés sur le partage \ac{SMB} \texttt{\textbackslash\textbackslash 192.214.23.15}\allowbreak\texttt{\textbackslash eNoteFiles}. La base ne stocke que des clés relatives pour les photos, les
+documents et les captures d'anomalie : un poste de travail ne peut donc pas enregistrer un chemin local
+qui n'existerait pas ailleurs. Les documents de cours sont classés par cursus
+(\texttt{documents\textbackslash MAJOR\_CODE\textbackslash CHAPTER\_CODE\textbackslash
+LESSON\_CODE}) et les documents de la bibliothèque par rayon
+(\texttt{library\textbackslash TYPE\textbackslash CATEGORY\_CODE}).
+
+Les trois tables de la bibliothèque documentaire (\path{library_category}, \path{library_item} et
+\path{library_access}) sont créées à la première ouverture de la page, comme \path{document_access} :
+une installation existante n'a donc pas de migration manuelle à exécuter. Le catalogue ne stocke que
+des clés relatives, et les vidéos sont lues par un protocole interne \texttt{library-media://} qui ne
+donné à la fenêtre aucun chemin du disque.\par
+
+Les évolutions du schéma sont livrées sous forme de scripts numérotés dans
+\texttt{deploy/server} (initialisation du rôle et de la base, création du compte administrateur,
+contraintes, créneaux horaires, portée des secrétaires, droits de conduite, etc.), appliqués dans
+l'ordre sur une base existante. Une sauvegarde \texttt{pg\_dump} est prise avant chaque campagne de
+migration.
+
+\subsubsection{Stockage Partagé des Fichiers}
+Les photos, les documents de cours, les documents de la bibliothèque et les captures d'anomalie vivent
+sur un partage \ac{SMB} du serveur, et non dans le dossier de chaque poste : une photo copiée sur le
+poste A serait invisible au poste B et disparaîtrait à la réinstallation de A. Windows n'ouvre un
+partage qu'à un compte qui possède déjà une session avec le serveur ; un poste jamais mappé lirait
+donc le partage comme un dossier vide, et afficherait « fichier introuvable » alors que la base
+répond normalement.
+
+Le client ouvre cette session lui-même, avec le compte du préréglage de déploiement
+(\texttt{smbUser}, \texttt{smbPassword}), au démarrage puis de nouveau, au plus toutes les vingt
+secondes, lorsqu'un fichier reste introuvable. La session est établie par \texttt{net use} avec
+l'option \texttt{/persistent:no} : aucun lecteur ni mappage ne subsiste dans le profil de
+l'utilisateur, et un poste reconfiguré n'a rien à nettoyer. Les échecs sont nommés — identifiants
+refusés, session concurrente d'un autre compte, partage absent, serveur injoignable, droits
+insuffisants — puis consignés au démarrage, de sorte qu'une panne de droits ne se confonde pas avec
+des fichiers perdus. Un poste Linux monte le partage par CIFS avant le lancement ; l'application
+y voit alors un simple chemin local.
+
+\subsubsection{Implémentation de la Sécurité}
+La sécurité repose sur cinq mécanismes complémentaires.
+\begin{itemize}
+    \item \textbf{Hachage des mots de passe} : les mots de passe ne sont jamais stockés en clair ;
+          bcryptjs les hache avec un coût de 10. La comparaison se fait par \texttt{bcrypt.compare}.
+    \item \textbf{Requêtes préparées} : chaque requête passe par des paramètres positionnels
+          (\texttt{\$1}, \texttt{\$2}, \ldots), ce qui neutralise l'injection \ac{SQL}.
+    \item \textbf{Contrôle d'accès par rôle} : le rôle du compte est relu en base à chaque opération
+          sensible. Le rôle scolaire d'une personne (qui elle est dans l'établissement) est conservé
+          séparément et ne peut jamais tenir lieu d'autorisation. Un changement de rôle est une
+          opération d'administration : il est refusé sur son propre compte et ne peut retirer le rôle
+          Admin au dernier administrateur actif.
+    \item \textbf{Règles temporelles paramétrables} : une option globale peut borner une écriture dans le
+          temps, et le service concerné la relit en base à chaque appel. Le verrou de suppression des
+          absences en est l'exemple : pendant les premières minutes d'une séance, un enseignant ne peut
+          pas transformer une absence en présence, même en appelant le pont de préchargement
+          directement.
+    \item \textbf{Protection contre la devinette de mot de passe} : cinq échecs consécutifs suspendent
+          le compte. Un administrateur le rétablit depuis la page des comptes suspendus, et la
+          réinitialisation remet le compteur à zéro.
+    \item \textbf{Journal d'activité} : les connexions, les refus, les changements de rôle et les
+          modifications de données sont consignés dans \texttt{audit\_log}, en ajout seul. Les entrées
+          ne sont ni modifiables ni supprimables depuis l'application, et celles de plus de douze mois
+          sont élaguées automatiquement.
+\end{itemize}
+La fenêtre est créée avec l'isolation de contexte active et l'intégration Node désactivée ; seule
+l'interface déclarée dans le pont de préchargement est exposée à la page. Les pièces jointes et les
+photos passent par des dialogues natifs ouverts par le processus principal : l'interface ne lit jamais
+un chemin arbitraire du disque. Les messages directs sont chiffrés au repos au moyen du coffre
+\texttt{safeStorage} du système d'exploitation.
+
+\subsection{Architecture Frontend}
+L'interface est une application React 19 découpée en une centaine de composants. Elle s'appuie sur un
+système de conception unifié : jetons de couleur, d'espacement, de rayon et de mouvement définis dans
+\texttt{src/renderer/index.css}, composants partagés (boutons, dialogues, tableaux, pagination, états
+vides, filtres, sélecteur de langue, bascule de thème) et une bibliothèque d'icônes unique.
+
+La mise en page suit une coque stable : barre latérale fixe, en-tête de page, barre d'outils, zone de
+contenu limitée à 1~440~px et barre d'enregistrement affichée uniquement lorsqu'un formulaire est
+modifié. Les listes longues utilisent un tableau dense avec en-tête collant, sélection multiple,
+actions groupées et pagination ; les dossiers utilisent un volet d'inspection à droite plutôt qu'une
+page séparée. La densité, le thème et l'échelle de l'interface sont mémorisés par appareil.
+
+Quatre apparences sont proposées (clair, sombre, noir absolu et suivi du système) et quatre palettes
+d'accent (émeraude, rouge, or, bleu). Les polices Instrument Sans, Instrument Serif, JetBrains Mono et
+Noto Naskh Arabic sont embarquées dans l'application, ce qui garantit un rendu identique sur un poste
+sans Internet et dans les rapports imprimés.
+
+\subsection{Internationalisation (i18n)}
+L'application est disponible en anglais, en arabe et en français. Le choix de langue est une préférence
+locale à l'appareil, conservée dans le stockage du navigateur, comme le thème : elle ne modifie pas le
+compte et n'affecte pas les autres postes.
+
+Le dispositif couvre trois niveaux. Pour l'interface, les dictionnaires arabe et français contiennent
+3~790 entrées et l'anglais sert de langue de repli ; un changement de langue remonte l'arbre des
+composants pour que chaque écran recharge ses données. Les dates et heures affichées suivent la même
+langue : les noms de jours et de mois ne restent plus en anglais sur un écran arabe ou français. Pour la base, chaque libellé de référence porte
+ses colonnes \texttt{\_en}, \texttt{\_ar} et \texttt{\_fr}, et chaque nom de personne ses colonnes
+\texttt{\_la} et \texttt{\_ar} ; le processus principal substitue la variante active avant de renvoyer
+les lignes. Lorsqu'une requête ne sélectionne que l'alias généré, un catalogue construit à partir de
+\texttt{information\_schema} retrouve les variantes et les applique. Pour la direction d'écriture,
+l'arabe bascule le document en \ac{RTL}, retourne la barre latérale et les tableaux, et les champs de
+saisie multilingues affichent leurs variantes côte à côte.
+
+\subsection{Génération et Intégration des PDF}
+Les rapports ne dépendent d'aucune bibliothèque \ac{PDF} externe : ils sont produits par le moteur
+Chromium d'Electron. Le processus principal construit un document \ac{HTML} autonome, l'ouvre dans une
+fenêtre masquée, puis appelle \texttt{printToPDF} avec les marges et le format de page choisis. Les
+polices embarquées sont déclarées dans la feuille de style du document, si bien que le fichier obtenu
+est identique sur tout poste, y compris pour l'arabe.
+
+Le rapport individuel de l'élève est le document principal : il reprend l'identité, la scolarité, les
+affectations, les absences, les observations, les récompenses et les sanctions, dans la langue choisie
+au moment de l'export. Le directeur sélectionne les rubriques à inclure, puis enregistre le fichier par
+un dialogue natif. Les listes de séances et le journal d'activité peuvent également être exportés, le
+premier au format imprimable, le second au format \ac{CSV}.
+
+\subsection{Fonctionnement Hors Ligne}
+Un serveur peut s'arrêter : coupure de courant, redémarrage de PostgreSQL, câble débranché. Le poste
+continue alors de fonctionner sur ce qu'il a déjà lu, et le dit. Trois mécanismes complémentaires
+couvrent la panne.
+
+\begin{itemize}
+    \item \textbf{Copies locales en lecture.} Les données lues par un poste — dossiers d'élèves,
+séances, photos, emplois du temps, examens — restent dans son dossier de données avec la date de leur
+dernière lecture. La fenêtre \emph{Enregistré sur cet ordinateur} indique ce qui est conservé, en
+quelle quantité et depuis quand, et rappelle que la base redevient la référence dès qu'elle répond.
+Les fichiers de la bibliothèque et des leçons peuvent en outre être enregistrés pour être ouverts
+pendant une panne ; un cache limité à deux gigaoctets, élagué du plus ancien, évite de remplir le
+disque.
+    \item \textbf{File d'attente des écritures.} Les écritures additives — rapport d'anomalie, rapport
+de test bêta, commentaire de notification — sont acceptées hors ligne et rejouées à la reconnexion,
+dans l'ordre. Chaque type porte une clé naturelle qui rend le rejeu idempotent : une fiche de rapport
+est un « upsert », un commentaire identique n'est pas enregistré deux fois. L'interface confirme
+« enregistré sur cet ordinateur, sera envoyé au retour du serveur », et jamais « enregistré ».
+    \item \textbf{Brouillons de formulaire.} Les formulaires longs — notes d'examen, fiche de l'élève,
+signalement d'anomalie, détails d'une séance — conservent la saisie en cours, par formulaire et par
+compte, pendant quatorze jours. À la réouverture, l'application propose de restaurer ou d'abandonner
+le travail ; elle ne réapplique jamais un brouillon d'elle-même, afin qu'un poste partagé ne présente
+pas la saisie d'un collègue. Le brouillon est effacé dès que l'enregistrement réussit.
+\end{itemize}
+
+Les écritures qui ne peuvent pas être rejouées sans risque restent refusées hors ligne : récompenses et
+sanctions, affectations, planification, validation des notes et téléversement de pièces jointes. Le
+message explique alors la règle au lieu d'échouer en silence. La connexion elle-même est bornée : seul
+le dernier compte qui s'est connecté sur le poste peut se reconnecter sans serveur, avec son mot de
+passe, pendant quatre-vingt-dix jours et cinq tentatives.
+
+\subsection{Type d'Application (multi-pages / mono-page)}
+\appname{} est une application de bureau à page unique (\ac{SPA}). La fenêtre charge un seul document
+\ac{HTML} ; la navigation interne est assurée par React Router en mode \texttt{HashRouter}, ce qui
+évite toute dépendance à un serveur \ac{HTTP} pour résoudre les routes. Ce choix découle du mode de
+déploiement : il n'existe pas de serveur web dans l'architecture, et un rechargement complet de la page
+n'a aucune raison de se produire. Le routeur conserve néanmoins des adresses distinctes pour chaque
+écran, ce qui permet au fil d'Ariane, à la palette de commandes et aux liens de notification de désigner
+une destination précise.
+
+\section{Conclusion}
+La réalisation repose sur trois couches clairement séparées : PostgreSQL pour la vérité des données,
+le processus principal pour les règles et les contrôles, et une interface React pour la présentation.
+Cette séparation explique que la sécurité ne dépende pas de l'écran affiché, que l'application puisse
+fonctionner sans Internet, continuer à lire et à mettre en file ses écritures quand le serveur
+s'arrête, et que les rapports soient générés avec les mêmes polices que l'interface. Le
+chapitre suivant transforme ces choix en mode d'emploi, de l'installation du serveur à la journée de
+travail de chaque rôle.

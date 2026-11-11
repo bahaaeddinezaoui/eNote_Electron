@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <!-- eNote application mark.
+       The letter alone: the serif italic "e" of the wordmark, set large on the
+       ink surface and closed by nothing — no period follows it, because here
+       the letter is the whole mark. The tile is a full circle with a hairline
+       jade edge, so the corners are transparent and the mark reads as a disc in
+       a Windows taskbar or a macOS dock. -->
+  <defs>
+    <linearGradient id="tile" x1="0" y1="0" x2="0.55" y2="1">
+      <stop offset="0" stop-color="#14261c" />
+      <stop offset="0.55" stop-color="#0c1a14" />
+      <stop offset="1" stop-color="#06120d" />
+    </linearGradient>
+    <radialGradient id="glow" cx="0.26" cy="0.14" r="0.8">
+      <stop offset="0" stop-color="#3ba97d" stop-opacity="0.30" />
+      <stop offset="1" stop-color="#3ba97d" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+
+  <circle cx="512" cy="512" r="484" fill="url(#tile)" />
+  <circle cx="512" cy="512" r="484" fill="url(#glow)" />
+  <circle cx="512" cy="512" r="481" fill="none" stroke="#3ba97d" stroke-opacity="0.32" stroke-width="6" />
+
+  <!-- The "e", centred on the disc and drawn as large as the mark can hold: the
+       baseline is set so the letter's ink band (the italic "e" dips a little
+       below its own baseline) sits on 512, and text-anchor="middle" puts the
+       glyph's advance on the same axis, nudged left for the italic's lean. -->
+  <text
+    x="502"
+    y="766"
+    text-anchor="middle"
+    font-family="'Instrument Serif', 'Iowan Old Style', serif"
+    font-style="italic"
+    font-weight="400"
+    font-size="1000"
+    fill="#f4f8f3"
+  >e</text>
+</svg>

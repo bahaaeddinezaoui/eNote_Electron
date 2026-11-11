@@ -1,0 +1,1744 @@
+@import "tailwindcss";
+/* Red and gold palettes: overrides of the accent tokens below, keyed on
+   data-accent (see accents.css for which block applies when). Must stay with
+   the other @import rules, above every other statement. */
+@import "./accents.css";
+
+/* Build output is not source. Scanning it kept retired utilities (the old
+   slate/gray ramp) alive in the new stylesheet through stale bundles. */
+@source not "../../dist";
+@source not "../../out";
+@source not "../../.opencode";
+
+/* Class-based dark mode: add `.dark` to <html> to switch the whole app. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ============================================================================
+   eNote — "nocturne" design system
+   ----------------------------------------------------------------------------
+   Near-black pine canvas (#0d1310), a slightly lifted panel (#141c17), warm
+   off-white ink and two signal colours: jade (#3ba97d) for action and selection,
+   ember (#ef6840) for attention and counts. Sampled from the reference UI. No
+   gradients, no pure black or white surfaces, no decorative elevation. Numerals
+   are tabular everywhere they sit in a column; identifiers are mono.
+   ========================================================================= */
+@theme {
+  /* ---- Type: one collection, three roles --------------------------------
+     Instrument Sans for the interface, Instrument Serif for display, JetBrains
+     Mono for identifiers and figures. Noto Naskh Arabic is the Arabic member of
+     the same collection, so Arabic text is never left to a system fallback.
+     The stacks are mirrored in src/shared/typography.js, which the printed
+     reports use — change the collection in both places, never one. */
+  --font-sans: "Instrument Sans", "Noto Naskh Arabic", "Helvetica Neue", sans-serif;
+  --font-serif: "Instrument Serif", "Noto Naskh Arabic", "Iowan Old Style", serif;
+  --font-mono: "JetBrains Mono", "Noto Naskh Arabic", "SFMono-Regular", Consolas, monospace;
+
+  /* ---- Surfaces (dark, default) ---- */
+  --color-canvas: #0d1310;
+  --color-surface: #141c17;
+  --color-raised: #19221c;
+  --color-sunken: #090e0b;
+  --color-surface-muted: #1a241e;
+  --color-surface-muted-dark: #1a241e;
+  --color-surface-dark: #141c17;
+  --color-canvas-dark: #0d1310;
+
+  /* ---- Lines ---- */
+  --color-line: #232b26;
+  --color-line-strong: #666e68;
+  --color-border-subtle: #232b26;
+  --color-border-subtle-dark: #232b26;
+
+  /* ---- Ink ---- */
+  --color-ink: #eceae0;
+  --color-ink-2: #a6b0a7;
+  --color-ink-3: #8e978f;
+  --color-ink-muted: #8e978f;
+  --color-ink-muted-dark: #a6b0a7;
+  --color-ink-disabled: #59625a;
+  --color-ink-dark: #eceae0;
+
+  /* ---- Accent: jade ---- */
+  --color-jade-50: #16271f;
+  --color-jade-100: #1b3328;
+  --color-jade-300: #2f8f68;
+  --color-jade-500: #3ba97d;
+  --color-jade-600: #57bf93;
+  --color-jade-700: #7dd3ae;
+  --color-jade-solid: #3ba97d;
+  --color-on-jade: #06120d;
+  --color-selection: #1a3227;
+
+  /* ---- Secondary signal: ember ---- */
+  --color-ember-50: #2a1712;
+  --color-ember-100: #3a1e16;
+  --color-ember-300: #c1502f;
+  --color-ember-500: #ef6840;
+  --color-ember-600: #f5845f;
+  --color-ember-700: #f8a184;
+  --color-ember-solid: #ef6840;
+  --color-on-ember: #1b0a05;
+
+  /* ---- Intent ---- */
+  --color-success: #7cc79a;
+  --color-success-bg: #16281f;
+  --color-success-ink: #a8dcbd;
+  --color-warning: #e0a458;
+  --color-warning-bg: #2a2114;
+  --color-warning-ink: #efc383;
+  --color-danger: #e2674a;
+  --color-danger-bg: #2b1712;
+  --color-danger-ink: #f2997f;
+  --color-info: #7bb3ab;
+  --color-info-bg: #132523;
+  --color-info-ink: #b0d3cc;
+
+  /* The slate and gray ramps are retired: screens read the semantic ink,
+     line and surface tokens. White remains the one legacy colour still in use. */
+  --color-white: #f2f0e7;
+
+  /* Hue ramps remapped so any residual utility reads as jade / ember / pine
+     rather than a stock blue-violet dashboard palette. */
+  --color-blue-50: #16271f;
+  --color-blue-100: #1b3328;
+  --color-blue-200: #22422f;
+  --color-blue-300: #2a6b4f;
+  --color-blue-400: #2f8f68;
+  --color-blue-500: #3ba97d;
+  --color-blue-600: #57bf93;
+  --color-blue-700: #7dd3ae;
+  --color-blue-800: #a5e3c8;
+  --color-blue-900: #cdf2e0;
+  --color-indigo-50: #16271f;
+  --color-indigo-100: #1b3328;
+  --color-indigo-200: #22422f;
+  --color-indigo-300: #2a6b4f;
+  --color-indigo-400: #2f8f68;
+  --color-indigo-500: #3ba97d;
+  --color-indigo-600: #57bf93;
+  --color-indigo-700: #7dd3ae;
+  --color-indigo-800: #a5e3c8;
+  --color-indigo-900: #cdf2e0;
+  --color-purple-50: #261c17;
+  --color-purple-100: #33251d;
+  --color-purple-500: #c98d70;
+  --color-purple-600: #d9a084;
+  --color-purple-700: #e5b69d;
+  --color-emerald-50: #16281f;
+  --color-emerald-100: #1b3328;
+  --color-emerald-200: #24402f;
+  --color-emerald-400: #46a67a;
+  --color-emerald-500: #7cc79a;
+  --color-emerald-600: #98d5b3;
+  --color-emerald-700: #b3e2c8;
+  --color-emerald-800: #cdeedb;
+  --color-emerald-900: #e4f7ec;
+  --color-rose-50: #2a1712;
+  --color-rose-100: #3a1e16;
+  --color-rose-200: #552a1e;
+  --color-rose-300: #c1502f;
+  --color-rose-400: #d86744;
+  --color-rose-500: #ef6840;
+  --color-rose-600: #f5845f;
+  --color-rose-700: #f8a184;
+  --color-rose-800: #fbc0ab;
+  --color-rose-900: #fdd8ca;
+  --color-amber-50: #2a2114;
+  --color-amber-100: #3a2e1a;
+  --color-amber-200: #55431f;
+  --color-amber-300: #7d6229;
+  --color-amber-400: #b9873f;
+  --color-amber-500: #e0a458;
+  --color-amber-600: #eab877;
+  --color-amber-700: #f0c68e;
+  --color-amber-800: #f4d6ad;
+  --color-amber-900: #f8e4cb;
+  --color-sky-50: #132523;
+  --color-sky-100: #183230;
+  --color-sky-500: #7bb3ab;
+  --color-sky-700: #b0d3cc;
+  --color-red-50: #2a1712;
+  --color-red-100: #3a1e16;
+  --color-red-200: #552a1e;
+  --color-red-300: #7a3520;
+  --color-red-400: #c1502f;
+  --color-red-500: #e2674a;
+  --color-red-600: #ef6840;
+  --color-red-700: #f5845f;
+  --color-red-800: #f8a184;
+  --color-red-900: #fbc0ab;
+  --color-green-50: #16281f;
+  --color-green-100: #1b3328;
+  --color-green-200: #24402f;
+  --color-green-300: #2a6b4f;
+  --color-green-400: #2f8f68;
+  --color-green-500: #3ba97d;
+  --color-green-600: #57bf93;
+  --color-green-700: #7dd3ae;
+  --color-green-800: #a5e3c8;
+  --color-green-900: #cdf2e0;
+  --color-violet-50: #16271f;
+  --color-violet-100: #1b3328;
+  --color-violet-200: #22422f;
+  --color-violet-300: #2a6b4f;
+  --color-violet-400: #2f8f68;
+  --color-violet-500: #3ba97d;
+  --color-violet-600: #57bf93;
+  --color-violet-700: #7dd3ae;
+  --color-violet-800: #a5e3c8;
+  --color-violet-900: #cdf2e0;
+  --color-orange-50: #2a1712;
+  --color-orange-100: #3a1e16;
+  --color-orange-200: #552a1e;
+  --color-orange-300: #7a3520;
+  --color-orange-400: #c1502f;
+  --color-orange-500: #ef6840;
+  --color-orange-600: #f5845f;
+  --color-orange-700: #f8a184;
+  --color-orange-800: #fbc0ab;
+  --color-orange-900: #fdd8ca;
+  --color-cyan-50: #132523;
+  --color-cyan-100: #183230;
+  --color-cyan-200: #1f403c;
+  --color-cyan-300: #2c5f59;
+  --color-cyan-400: #4f8f87;
+  --color-cyan-500: #7bb3ab;
+  --color-cyan-600: #94c5be;
+  --color-cyan-700: #b0d3cc;
+  --color-cyan-800: #cbe5e0;
+  --color-cyan-900: #e0f2ef;
+  --color-teal-50: #132523;
+  --color-teal-100: #183230;
+  --color-teal-500: #7bb3ab;
+  --color-teal-700: #b0d3cc;
+  --color-yellow-50: #2a2114;
+  --color-yellow-100: #3a2e1a;
+  --color-yellow-200: #55431f;
+  --color-yellow-300: #7d6229;
+  --color-yellow-400: #b9873f;
+  --color-yellow-500: #e0a458;
+  --color-yellow-600: #eab877;
+  --color-yellow-700: #f0c68e;
+  --color-yellow-800: #f4d6ad;
+  --color-yellow-900: #f8e4cb;
+  --color-lime-50: #16281f;
+  --color-lime-100: #1b3328;
+  --color-lime-500: #3ba97d;
+  --color-lime-600: #57bf93;
+  --color-lime-700: #7dd3ae;
+  --color-pink-50: #2a1712;
+  --color-pink-100: #3a1e16;
+  --color-pink-500: #ef6840;
+  --color-pink-600: #f5845f;
+  --color-pink-700: #f8a184;
+  --color-purple-800: #a86a4a;
+  --color-purple-900: #7a4a33;
+  --color-emerald-300: #2a6b4f;
+  --color-indigo-950: #0c1a14;
+  --color-sky-200: #1f403c;
+  --color-sky-300: #2c5f59;
+  --color-violet-200: #22422f;
+  --color-violet-800: #a5e3c8;
+  --color-violet-900: #cdf2e0;
+  --color-violet-950: #0c1a14;
+  --color-teal-600: #94c5be;
+  --color-lime-900: #cdf2e0;
+
+
+  /* ---- Type scale (root 16) ---- */
+  --text-micro: 0.6875rem;
+  --text-micro--line-height: 0.875rem;
+  --text-micro--letter-spacing: 0.06em;
+  --text-label: 0.75rem;
+  --text-label--line-height: 1rem;
+  --text-dense: 0.8125rem;
+  --text-dense--line-height: 1.125rem;
+  --text-body: 0.875rem;
+  --text-body--line-height: 1.25rem;
+  --text-h3: 0.9375rem;
+  --text-h3--line-height: 1.375rem;
+  --text-h2: 1.0625rem;
+  --text-h2--line-height: 1.5rem;
+  --text-title: 1.375rem;
+  --text-title--line-height: 1.75rem;
+  --text-display: 2rem;
+  --text-display--line-height: 2.25rem;
+  --text-display--letter-spacing: -0.015em;
+  --text-page: 2.25rem;
+  --text-page--line-height: 2.5rem;
+  --text-page--letter-spacing: -0.02em;
+
+  /* ---- Radii: hardware-adjacent, never pill-soft except tags ---- */
+  --radius-xs: 3px;
+  --radius-sm: 5px;
+  --radius-md: 7px;
+  --radius-lg: 10px;
+
+  /* ---- Elevation: borders do the work; shadows only for overlays ---- */
+  --shadow-e1: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --shadow-e2: 0 10px 28px -14px rgba(0, 0, 0, 0.7);
+  --shadow-e3: 0 28px 60px -28px rgba(0, 0, 0, 0.85);
+  --shadow-premium: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --shadow-float: 0 28px 60px -28px rgba(0, 0, 0, 0.85);
+  --shadow-pop: 0 10px 28px -14px rgba(0, 0, 0, 0.7);
+  --shadow-glass: 0 10px 28px -14px rgba(0, 0, 0, 0.7);
+
+  /* ---- Motion ---- */
+  --ease-smooth: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-out: cubic-bezier(0.16, 0.84, 0.28, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-emphasis: cubic-bezier(0.22, 1, 0.36, 1);
+  /* Slight overshoot, for icons and small surfaces that should arrive with
+     weight rather than glide. */
+  --ease-spring: cubic-bezier(0.2, 1.5, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.36, 0.64, 1);
+
+  /* Duration scale, shared by both interface motion modes (see motion.js). */
+  --motion-instant: 90ms;
+  --motion-fast: 140ms;
+  --motion-base: 220ms;
+  --motion-slow: 340ms;
+}
+
+/* Layout metrics */
+:root {
+  --sidebar-w: 232px;
+  --sidebar-w-rail: 52px;
+  --topbar-h: 48px;
+  --masthead-h: 78px;
+  --toolbar-h: 46px;
+  --row-h: 36px;
+  --row-h-compact: 31px;
+  --control-h: 32px;
+  --control-h-sm: 26px;
+  --inspector-w: 420px;
+  --color-jade-ui: #3ba97d;
+  --color-jade-ink: #06120d;
+}
+
+/* Page mastheads bleed out of the layout's padded body, so a header drawn on a
+   padded page (`.page-body`) sits exactly where the full-bleed pages (Overview,
+   Student Records) draw theirs: same top inset, same rule across the width.
+   The cancelling values match Layout's px-5 / py-5. */
+.page-body .masthead {
+  margin-inline: -1.25rem;
+  margin-top: -1.25rem;
+}
+
+/* Pure black (OLED): the dark system with true-black surfaces, so an OLED panel
+   draws no light for the canvas. Always set together with .dark (see theme.js),
+   which keeps every dark component style and only these surfaces change. */
+:root.dark.oled {
+  --color-canvas: #000000;
+  --color-surface: #050505;
+  --color-raised: #0a0a0a;
+  --color-sunken: #000000;
+  --color-surface-muted: #111111;
+  --color-surface-muted-dark: #111111;
+  --color-surface-dark: #050505;
+  --color-canvas-dark: #000000;
+  --color-line: #1c1c1c;
+  --color-line-strong: #2e2e2e;
+  --color-border-subtle: #1c1c1c;
+  --color-border-subtle-dark: #1c1c1c;
+}
+
+/* Light mode: the same system in daylight — cool paper, pine ink, same jade. */
+:root:not(.dark) {
+  --color-canvas: #eef1ec;
+  --color-surface: #f8faf7;
+  --color-raised: #ffffff;
+  --color-sunken: #e2e7e0;
+  --color-surface-muted: #e9eee8;
+  --color-surface-muted-dark: #e9eee8;
+  --color-line: #d7ded6;
+  --color-line-strong: #818883;
+  --color-border-subtle: #d7ded6;
+  --color-border-subtle-dark: #d7ded6;
+  --color-ink: #101712;
+  --color-ink-2: #3c463f;
+  --color-ink-3: #5e6961;
+  --color-ink-muted: #5e6961;
+  --color-ink-muted-dark: #3c463f;
+  --color-ink-disabled: #8b958d;
+  --color-ink-dark: #101712;
+  --color-white: #ffffff;
+  --color-jade-50: #e6f2ec;
+  --color-jade-100: #cfe7dd;
+  --color-jade-300: #2f8f68;
+  --color-jade-500: #1a6b4e;
+  --color-jade-600: #12563e;
+  --color-jade-700: #0c4331;
+  --color-jade-solid: #17694c;
+  --color-on-jade: #f7fbf8;
+  --color-selection: #d3e8de;
+  --color-ember-50: #f9e7e0;
+  --color-ember-100: #f4d5c9;
+  --color-ember-300: #d4613c;
+  --color-ember-500: #c2492a;
+  --color-ember-600: #a83c22;
+  --color-ember-700: #8c301a;
+  --color-ember-solid: #c2492a;
+  --color-on-ember: #fdf6f2;
+  --color-success: #2f7f5c;
+  --color-success-bg: #e0efe5;
+  --color-success-ink: #235f40;
+  --color-warning: #a06a1e;
+  --color-warning-bg: #f6ead4;
+  --color-warning-ink: #6b4512;
+  --color-danger: #bb4a2c;
+  --color-danger-bg: #f8e1d7;
+  --color-danger-ink: #8a2f1b;
+  --color-info: #356f68;
+  --color-info-bg: #e0eeeb;
+  --color-info-ink: #1f4a44;
+  --color-blue-50: #e6f2ec;
+  --color-blue-100: #cfe7dd;
+  --color-blue-200: #a9d6c4;
+  --color-blue-300: #6fbb9b;
+  --color-blue-400: #2f8f68;
+  --color-blue-500: #1f7a58;
+  --color-blue-600: #1a6b4e;
+  --color-blue-700: #12563e;
+  --color-blue-800: #0c4331;
+  --color-blue-900: #083527;
+  --color-indigo-50: #e6f2ec;
+  --color-indigo-100: #cfe7dd;
+  --color-indigo-200: #a9d6c4;
+  --color-indigo-500: #1f7a58;
+  --color-indigo-600: #1a6b4e;
+  --color-indigo-700: #12563e;
+  --color-emerald-50: #e3f1e9;
+  --color-emerald-100: #d2e8dc;
+  --color-emerald-200: #bcdccb;
+  --color-emerald-400: #3f8f68;
+  --color-emerald-500: #327a59;
+  --color-emerald-600: #27684b;
+  --color-emerald-700: #1f5640;
+  --color-emerald-800: #174432;
+  --color-emerald-900: #103427;
+  --color-rose-50: #f9e7e0;
+  --color-rose-100: #f4d5c9;
+  --color-rose-200: #e8b7a4;
+  --color-rose-300: #dd8c70;
+  --color-rose-400: #d4613c;
+  --color-rose-500: #c2492a;
+  --color-rose-600: #a83c22;
+  --color-rose-700: #8c301a;
+  --color-rose-800: #712613;
+  --color-rose-900: #5a1e0f;
+  --color-amber-50: #f7eeda;
+  --color-amber-100: #f0e2c3;
+  --color-amber-200: #e6d0a1;
+  --color-amber-300: #c9a966;
+  --color-amber-400: #b9873f;
+  --color-amber-500: #a06a1e;
+  --color-amber-600: #8a5a15;
+  --color-amber-700: #6b4512;
+  --color-amber-800: #523709;
+  --color-amber-900: #402c07;
+  --color-sky-50: #e4eeec;
+  --color-sky-100: #d3e4e0;
+  --color-sky-500: #356f68;
+  --color-sky-700: #1f4a44;
+  --color-red-50: #f9e7e0;
+  --color-red-100: #f4d5c9;
+  --color-red-200: #e8b7a4;
+  --color-red-300: #dd8c70;
+  --color-red-400: #d4613c;
+  --color-red-500: #bb4a2c;
+  --color-red-600: #a83c22;
+  --color-red-700: #8c301a;
+  --color-red-800: #712613;
+  --color-red-900: #5a1e0f;
+  --color-green-50: #e3f1e9;
+  --color-green-100: #d2e8dc;
+  --color-green-200: #bcdccb;
+  --color-green-300: #6fbb9b;
+  --color-green-400: #3f8f68;
+  --color-green-500: #327a59;
+  --color-green-600: #27684b;
+  --color-green-700: #1f5640;
+  --color-green-800: #174432;
+  --color-green-900: #103427;
+  --color-violet-50: #e6f2ec;
+  --color-violet-100: #cfe7dd;
+  --color-violet-200: #a9d6c4;
+  --color-violet-300: #6fbb9b;
+  --color-violet-400: #2f8f68;
+  --color-violet-500: #1f7a58;
+  --color-violet-600: #1a6b4e;
+  --color-violet-700: #12563e;
+  --color-violet-800: #0c4331;
+  --color-violet-900: #083527;
+  --color-orange-50: #f9e7e0;
+  --color-orange-100: #f4d5c9;
+  --color-orange-200: #e8b7a4;
+  --color-orange-300: #dd8c70;
+  --color-orange-400: #d4613c;
+  --color-orange-500: #c2492a;
+  --color-orange-600: #a83c22;
+  --color-orange-700: #8c301a;
+  --color-orange-800: #712613;
+  --color-orange-900: #5a1e0f;
+  --color-cyan-50: #e4eeec;
+  --color-cyan-100: #d3e4e0;
+  --color-cyan-200: #bad8d3;
+  --color-cyan-300: #7fb0a9;
+  --color-cyan-400: #4f8f87;
+  --color-cyan-500: #356f68;
+  --color-cyan-600: #2a5b55;
+  --color-cyan-700: #1f4a44;
+  --color-cyan-800: #173a35;
+  --color-cyan-900: #102b27;
+  --color-teal-50: #e4eeec;
+  --color-teal-100: #d3e4e0;
+  --color-teal-500: #356f68;
+  --color-teal-700: #1f4a44;
+  --color-yellow-50: #f7eeda;
+  --color-yellow-100: #f0e2c3;
+  --color-yellow-200: #e6d0a1;
+  --color-yellow-300: #c9a966;
+  --color-yellow-400: #b9873f;
+  --color-yellow-500: #a06a1e;
+  --color-yellow-600: #8a5a15;
+  --color-yellow-700: #6b4512;
+  --color-yellow-800: #523709;
+  --color-yellow-900: #402c07;
+  --color-lime-50: #e3f1e9;
+  --color-lime-100: #d2e8dc;
+  --color-lime-500: #327a59;
+  --color-lime-600: #27684b;
+  --color-lime-700: #1f5640;
+  --color-pink-50: #f9e7e0;
+  --color-pink-100: #f4d5c9;
+  --color-pink-500: #c2492a;
+  --color-pink-600: #a83c22;
+  --color-pink-700: #8c301a;
+  --color-purple-800: #6a3c26;
+  --color-purple-900: #552f1d;
+  --color-emerald-300: #6fbb9b;
+  --color-indigo-950: #083527;
+  --color-sky-200: #bad8d3;
+  --color-sky-300: #7fb0a9;
+  --color-violet-200: #a9d6c4;
+  --color-violet-800: #0c4331;
+  --color-violet-900: #083527;
+  --color-violet-950: #052219;
+  --color-teal-600: #2a5b55;
+  --color-lime-900: #103427;
+
+  --shadow-e1: 0 1px 2px rgba(16, 23, 18, 0.08);
+  --shadow-e2: 0 10px 28px -16px rgba(16, 23, 18, 0.28);
+  --shadow-e3: 0 28px 60px -30px rgba(16, 23, 18, 0.32);
+  --shadow-premium: 0 1px 2px rgba(16, 23, 18, 0.08);
+  --shadow-float: 0 28px 60px -30px rgba(16, 23, 18, 0.32);
+  --shadow-pop: 0 10px 28px -16px rgba(16, 23, 18, 0.28);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+}
+
+/* Native controls — select popups, date pickers, autofill — follow the theme
+   instead of Chromium's light field rendering. */
+:root {
+  color-scheme: light;
+}
+
+:root.dark {
+  color-scheme: dark;
+}
+
+/* Legacy surfaces that hard-code `bg-white` must follow the dark surface, while
+   white text on jade/ember keeps its paper ink. */
+.dark .bg-white {
+  background-color: var(--color-surface) !important;
+}
+
+.dark [class*="bg-white/"] {
+  background-color: color-mix(in srgb, var(--color-surface) 82%, transparent) !important;
+}
+
+/* ---- Base ---------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 1.4;
+  background-color: var(--color-canvas);
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-variant-numeric: tabular-nums;
+  overflow: hidden;
+}
+
+::selection {
+  background: var(--color-selection);
+  color: var(--color-ink);
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* ---- Focus: a single, visible jade ring ---- */
+:focus-visible {
+  outline: 2px solid var(--color-jade-500);
+  outline-offset: 2px;
+}
+
+button:focus:not(:focus-visible),
+a:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ---- Scrollbars: narrow, quiet, no track ---- */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-line-strong);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-ink-3);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* ---- Utilities ---------------------------------------------------------- */
+.serif {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  letter-spacing: -0.015em;
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "zero" 1;
+}
+
+.kicker {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--color-ink-3);
+}
+
+.figure {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+.rule {
+  height: 1px;
+  background: var(--color-line);
+}
+
+.hairline-t {
+  border-top: 1px solid var(--color-line);
+}
+
+.hairline-b {
+  border-bottom: 1px solid var(--color-line);
+}
+
+.panel {
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+}
+
+.panel-flat {
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+}
+
+/* Overlays — dialogs, the command palette, menus — share one opaque surface.
+   Blur is not a character trait here: a registry is read for hours over dense
+   tables, and a frosted layer under text costs legibility for no information.
+   Kept under the historical name so existing call sites stay valid. */
+.glass {
+  background: var(--color-raised);
+  border: 1px solid var(--color-line-strong);
+}
+
+/* Keyboard escape hatch: out of the flow until focused, then a real control. */
+.skip-link {
+  position: fixed;
+  inset-inline-start: 12px;
+  top: 8px;
+  z-index: 100;
+  transform: translateY(-200%);
+  border: 1px solid var(--color-jade-500);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-ink);
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.skip-link:focus-visible {
+  transform: none;
+  outline: 2px solid var(--color-jade-500);
+  outline-offset: 2px;
+}
+
+.inset-label {
+  border: 1px solid var(--color-line);
+  background: var(--color-surface-muted);
+  color: var(--color-ink-2);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 1px 5px;
+  border-radius: var(--radius-xs);
+}
+
+.kbd {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 1;
+  padding: 3px 5px;
+  border: 1px solid var(--color-line-strong);
+  border-bottom-width: 2px;
+  border-radius: var(--radius-xs);
+  background: var(--color-surface-muted);
+  color: var(--color-ink-2);
+}
+
+/* Dense data table primitives, shared by the flagship screens. */
+.data-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 12.5px;
+}
+
+.data-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  height: 30px;
+  padding: 0 10px;
+  background: var(--color-surface-muted);
+  border-bottom: 1px solid var(--color-line-strong);
+  color: var(--color-ink-3);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  text-align: start;
+  white-space: nowrap;
+}
+
+.data-table tbody td {
+  height: var(--row-h);
+  padding: 0 10px;
+  border-bottom: 1px solid var(--color-line);
+  color: var(--color-ink-2);
+  white-space: nowrap;
+}
+
+.data-table tbody tr {
+  background: var(--color-surface);
+  transition: background-color 120ms var(--ease-out);
+}
+
+.data-table tbody tr:hover {
+  background: var(--color-surface-muted);
+}
+
+.data-table tbody tr[data-selected="true"] {
+  background: var(--color-selection);
+  box-shadow: inset 2px 0 0 var(--color-jade-500);
+}
+
+.data-table tbody tr[data-open="true"] {
+  background: var(--color-selection);
+}
+
+/* A row that opens a record is reachable with Tab and activates with Enter or
+   Space (see ui/tableA11y.jsx). The ring is inset so the sticky header cannot
+   clip it, and it sits on the row so any control inside keeps its own ring. */
+.data-table tbody tr[data-activatable] {
+  cursor: pointer;
+}
+
+.data-table tbody tr[data-activatable]:focus-visible {
+  outline: 2px solid var(--color-jade-500);
+  outline-offset: -2px;
+}
+
+.data-table tbody tr.is-disabled td {
+  color: var(--color-ink-disabled);
+}
+
+/* An account row carries two lines — the display name, then the username and
+   email — so it takes its height from that content instead of the single-line
+   density the shared table sets. */
+.accounts-table tbody td {
+  height: auto;
+  padding-top: 7px;
+  padding-bottom: 7px;
+  vertical-align: middle;
+}
+
+/* The roster editor opens inside a full-width table row: that row takes its
+   height from the editor, and its fields are allowed to wrap. */
+.roster-cell {
+  height: auto;
+  padding: 0;
+  white-space: normal;
+  vertical-align: top;
+}
+
+/* Multiline .field: the same control shell, but the box grows with its rows. */
+.field-area {
+  height: auto;
+  padding-top: 7px;
+  padding-bottom: 7px;
+  resize: none;
+}
+
+.num {
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+}
+
+/* Form controls, dense edition. */
+.field {
+  width: 100%;
+  height: var(--control-h);
+  padding: 0 9px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-sm);
+  color: var(--color-ink);
+  font-size: 12.5px;
+  transition: border-color 120ms var(--ease-out), box-shadow 120ms var(--ease-out);
+}
+
+.field::placeholder {
+  color: var(--color-ink-3);
+}
+
+.field:hover {
+  border-color: var(--color-ink-3);
+}
+
+.field:focus {
+  outline: none;
+  border-color: var(--color-jade-500);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-jade-500) 20%, transparent);
+}
+
+.field:disabled {
+  background: var(--color-surface-muted);
+  color: var(--color-ink-disabled);
+  cursor: not-allowed;
+}
+
+/* A native select is as wide as its longest option, and labels now carry the
+   second language in brackets. Left uncapped, one long option stretches a whole
+   filter row past the window; this ceiling keeps every select in its lane. */
+select.field {
+  max-width: min(100%, 22rem);
+}
+
+textarea.field {
+  height: auto;
+  min-height: 64px;
+  padding: 7px 9px;
+  line-height: 1.45;
+  resize: vertical;
+}
+
+select.field {
+  appearance: none;
+  padding-inline-end: 26px;
+  background-image: linear-gradient(45deg, transparent 50%, var(--color-ink-3) 50%),
+    linear-gradient(135deg, var(--color-ink-3) 50%, transparent 50%);
+  background-position: calc(100% - 14px) 50%, calc(100% - 9px) 50%;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+}
+
+/* A native select popup is drawn from its <option> elements, not from the
+   classes on the closed control. Left to the user agent it opens as a white
+   list in a dark window — and stays white in pure black — so every option is
+   painted from the theme in all three appearances. The `.dark` rules sit above
+   the compatibility utilities a page may have put on an option, and the checked
+   row uses the app's selection colour rather than Chromium's blue. */
+select option,
+select optgroup {
+  background-color: var(--color-surface);
+  color: var(--color-ink);
+}
+
+/* A select left on `bg-transparent` (the week picker in Weekly Schedule sits on
+   a themed pill) can make Chromium paint the popup panel from the field's own
+   background, which falls back to white. Every select in dark and pure black
+   therefore carries a themed fill and an explicit dark native scheme, so the
+   closed control and the opened list agree on the surface. */
+.dark select,
+.dark option,
+.dark optgroup {
+  color-scheme: dark;
+}
+
+.dark select {
+  background-color: var(--color-surface);
+  color: var(--color-ink);
+}
+
+.dark select option,
+.dark select optgroup {
+  background-color: var(--color-raised);
+  color: var(--color-ink);
+}
+
+select option:checked,
+.dark select option:checked,
+select option:hover,
+.dark select option:hover {
+  background-color: var(--color-selection);
+  color: var(--color-ink);
+}
+
+select option:disabled,
+.dark select option:disabled {
+  color: var(--color-ink-disabled);
+}
+
+/* The remaining controls Chromium draws itself: keep their checked fill in the
+   palette instead of the browser blue. Unchecked boxes follow `color-scheme`
+   above, so they are dark with the rest of the window. */
+input[type='checkbox'],
+input[type='radio'],
+input[type='range'],
+progress {
+  accent-color: var(--color-jade-500);
+}
+
+/* The date/time picker button and the search field's clear button are drawn by
+   Chromium as dark glyphs; invert them in the dark appearances so they read on
+   the themed field instead of disappearing into it. */
+.dark input::-webkit-calendar-picker-indicator,
+.dark input[type='search']::-webkit-search-cancel-button,
+.dark input[type='search']::-webkit-search-decoration {
+  filter: invert(0.86) sepia(0.08) saturate(0.5) hue-rotate(90deg);
+  opacity: 0.75;
+  cursor: pointer;
+}
+
+.dark input::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+
+/* A file input's own button is a platform surface too. */
+input[type='file']::file-selector-button {
+  margin-inline-end: 8px;
+  padding: 3px 8px;
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-xs);
+  background: var(--color-surface-muted);
+  color: var(--color-ink-2);
+  font-size: 11.5px;
+  cursor: pointer;
+}
+
+input[type='file']::file-selector-button:hover {
+  background: var(--color-raised);
+  color: var(--color-ink);
+}
+
+/* Autofilled fields ignore the theme and arrive with a pale yellow wash; an
+   inset shadow in the surface colour keeps the field part of the page. */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+  -webkit-text-fill-color: var(--color-ink);
+  -webkit-box-shadow: 0 0 0 1000px var(--color-surface) inset;
+  caret-color: var(--color-ink);
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+.field-label {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-ink-3);
+}
+
+/* ---- Custom title bar ---------------------------------------------------
+   The window is frameless; the app header is the caption area. Anything
+   interactive inside it has to opt back out of the drag region. */
+.app-titlebar,
+.app-drag {
+  -webkit-app-region: drag;
+  user-select: none;
+}
+
+.app-titlebar button,
+.app-titlebar a,
+.app-titlebar input,
+.app-titlebar select,
+.app-titlebar [role='menu'],
+.app-titlebar [role='dialog'],
+.app-titlebar .no-drag,
+.app-drag button,
+.app-drag a,
+.app-drag input,
+.app-drag select,
+.app-drag .no-drag {
+  -webkit-app-region: no-drag;
+}
+
+.win-btn {
+  display: grid;
+  width: 46px;
+  height: 100%;
+  place-items: center;
+  color: var(--color-ink-3);
+  transition: background-color 110ms var(--ease-out), color 110ms var(--ease-out);
+}
+
+.win-btn:hover {
+  background: var(--color-surface-muted);
+  color: var(--color-ink);
+}
+
+.win-btn:active {
+  background: var(--color-raised);
+}
+
+.win-btn:focus-visible {
+  outline: 1px solid var(--color-jade-500);
+  outline-offset: -2px;
+}
+
+.win-btn--close:hover {
+  background: color-mix(in srgb, var(--color-ember-solid) 82%, #1b0a05);
+  color: #fdf6f2;
+}
+
+.win-btn--close:active {
+  background: color-mix(in srgb, var(--color-ember-solid) 92%, #1b0a05);
+}
+
+/* Checkboxes and radios are drawn by us so they read as machined controls
+   instead of the platform's white boxes in the dark surface. */
+input[type='checkbox'],
+input[type='radio'] {
+  appearance: none;
+  flex: none;
+  width: 12px;
+  height: 12px;
+  margin: 0;
+  border: 1px solid var(--color-line-strong);
+  border-radius: 2px;
+  background: var(--color-surface);
+  cursor: pointer;
+  transition: border-color 120ms var(--ease-out), background-color 120ms var(--ease-out);
+}
+
+input[type='radio'] {
+  border-radius: 50%;
+}
+
+input[type='checkbox']:hover,
+input[type='radio']:hover {
+  border-color: var(--color-ink-3);
+}
+
+/* The tick is inverted per theme: ink on the bright jade fill in dark mode,
+   paper on the deep jade fill in light mode. */
+input[type='checkbox']:checked {
+  border-color: var(--color-jade-solid);
+  background: var(--color-jade-solid)
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.4 6.3 4.8 8.7 9.6 3.6' fill='none' stroke='%23f7fbf8' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
+    center / 10px 10px no-repeat;
+}
+
+.dark input[type='checkbox']:checked {
+  background: var(--color-jade-solid)
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.4 6.3 4.8 8.7 9.6 3.6' fill='none' stroke='%2306120d' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
+    center / 10px 10px no-repeat;
+}
+
+input[type='radio']:checked {
+  border-color: var(--color-jade-solid);
+  background: var(--color-jade-solid);
+  box-shadow: inset 0 0 0 2px var(--color-surface);
+}
+
+input[type='checkbox']:focus-visible,
+input[type='radio']:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-jade-500) 24%, transparent);
+}
+
+input[type='checkbox']:disabled,
+input[type='radio']:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Horizontal, resizable split: a 5px grip that reads as a machined seam. */
+.split-handle {
+  position: relative;
+  flex: 0 0 5px;
+  cursor: col-resize;
+  background: var(--color-canvas);
+  border-inline: 1px solid var(--color-line);
+  transition: background-color 120ms var(--ease-out);
+  touch-action: none;
+}
+
+.split-handle::after {
+  content: "";
+  position: absolute;
+  inset-block: 40%;
+  inset-inline: 1px;
+  background: var(--color-line-strong);
+  border-radius: 2px;
+}
+
+.split-handle:hover,
+.split-handle[data-dragging="true"] {
+  background: var(--color-jade-500);
+  border-color: var(--color-jade-500);
+}
+
+.split-handle:hover::after,
+.split-handle[data-dragging="true"]::after {
+  background: var(--color-on-jade);
+}
+
+/* Thin, labelled meter used for attendance and completion. */
+.meter {
+  position: relative;
+  height: 3px;
+  width: 100%;
+  background: var(--color-line);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.meter > span {
+  display: block;
+  height: 100%;
+  background: var(--color-jade-500);
+}
+
+/* Native-feeling context menu rows. */
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  height: 28px;
+  padding: 0 9px;
+  border-radius: var(--radius-xs);
+  font-size: 12.5px;
+  color: var(--color-ink-2);
+  text-align: start;
+  cursor: default;
+}
+
+/* Rows that carry a second line need room for it; the icon stays on the
+   first line while the text grows downwards. */
+.menu-item[data-tall="true"] {
+  height: auto;
+  min-height: 40px;
+  padding: 5px 9px;
+  align-items: flex-start;
+}
+
+.menu-item[data-tall="true"] > svg {
+  margin-top: 2px;
+}
+
+.menu-item:hover,
+.menu-item[data-active="true"] {
+  background: var(--color-jade-500);
+  color: var(--color-on-jade);
+}
+
+.menu-item[data-active="true"] .kbd {
+  background: transparent;
+  border-color: color-mix(in srgb, var(--color-on-jade) 40%, transparent);
+  color: var(--color-on-jade);
+}
+
+.menu-item[data-danger="true"] {
+  color: var(--color-danger-ink);
+}
+
+.menu-item[data-danger="true"]:hover,
+.menu-item[data-danger="true"][data-active="true"] {
+  background: var(--color-danger-bg);
+  color: var(--color-danger-ink);
+}
+
+.menu-sep {
+  height: 1px;
+  margin: 4px 6px;
+  background: var(--color-line);
+}
+
+/* ---- Motion --------------------------------------------------------------
+   Two interface modes, one switch: `data-motion` on <html>.
+     performance — crafted transitions: page changes, layered dialogs, staggered
+                   plates, hover lift and press feedback.
+     powersave   — no animation and no transition at all; every state change is
+                   immediate, which is also what stops the repaint work motion
+                   would spend.
+   The operating system's reduced-motion preference always wins in either mode.
+   ------------------------------------------------------------------------- */
+:root {
+  --motion-lift: -1px;
+}
+
+@keyframes overlay-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes plate-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes page-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes drawer-in {
+  from { opacity: 0; transform: translateX(14px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes row-open {
+  from { opacity: 0; transform: translateY(3px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* `backwards`, not `both`: every keyframe ends at its resting state, so the
+   filled end state adds nothing and a lingering transform would re-anchor any
+   `position: fixed` child of the page or dialog. */
+.anim-overlay {
+  animation: overlay-in var(--motion-fast) var(--ease-out) backwards;
+}
+
+.anim-plate {
+  animation: plate-in var(--motion-base) var(--ease-emphasis) backwards;
+}
+
+/* Routed screen: a short rise and fade, keyed on the path in Layout. */
+.anim-page {
+  animation: page-in var(--motion-base) var(--ease-emphasis) backwards;
+}
+
+.anim-drawer {
+  animation: drawer-in var(--motion-slow) var(--ease-emphasis) backwards;
+}
+
+.anim-row {
+  animation: row-open var(--motion-fast) var(--ease-out) backwards;
+}
+
+/* A list or grid whose children arrive in sequence rather than together. */
+.anim-stagger > * {
+  animation: row-open var(--motion-base) var(--ease-emphasis) backwards;
+}
+
+.anim-stagger > *:nth-child(1) { animation-delay: 0ms; }
+.anim-stagger > *:nth-child(2) { animation-delay: 25ms; }
+.anim-stagger > *:nth-child(3) { animation-delay: 50ms; }
+.anim-stagger > *:nth-child(4) { animation-delay: 75ms; }
+.anim-stagger > *:nth-child(5) { animation-delay: 100ms; }
+.anim-stagger > *:nth-child(6) { animation-delay: 125ms; }
+.anim-stagger > *:nth-child(7) { animation-delay: 150ms; }
+.anim-stagger > *:nth-child(8) { animation-delay: 175ms; }
+
+/* ---- Motion baseline -----------------------------------------------------
+   The crafted classes above were opt-in, so screens that never opted in still
+   snapped between states. These rules give every control and field a shared
+   transition, and give tables and menus their arrival, without touching each
+   component. They sit in the base layer on purpose: a component that sets its
+   own transition utility still wins, and power save removes all of it. ---- */
+@layer base {
+  html[data-motion='performance'] :where(button, a[href], [role='button'], summary) {
+    transition-property: background-color, border-color, color, box-shadow, opacity, transform;
+    transition-duration: 140ms;
+    transition-timing-function: var(--ease-out);
+  }
+
+  html[data-motion='performance'] :where(input:not([type='checkbox']):not([type='radio']), select, textarea) {
+    transition-property: background-color, border-color, box-shadow, color;
+    transition-duration: 140ms;
+    transition-timing-function: var(--ease-out);
+  }
+}
+
+/* Table rows arrive in sequence the first time a body renders. Sorting and
+   paging reuse the same nodes, so nothing replays while somebody is reading.
+   Only the first screenful is animated: a roster of a thousand rows should not
+   start a thousand animations when it opens. */
+html[data-motion='performance'] .data-table tbody tr:nth-child(-n+12) {
+  animation: row-open 180ms var(--ease-out) backwards;
+}
+
+html[data-motion='performance'] .data-table tbody tr:nth-child(2) { animation-delay: 16ms; }
+html[data-motion='performance'] .data-table tbody tr:nth-child(3) { animation-delay: 32ms; }
+html[data-motion='performance'] .data-table tbody tr:nth-child(4) { animation-delay: 48ms; }
+html[data-motion='performance'] .data-table tbody tr:nth-child(5) { animation-delay: 64ms; }
+html[data-motion='performance'] .data-table tbody tr:nth-child(6) { animation-delay: 80ms; }
+html[data-motion='performance'] .data-table tbody tr:nth-child(7) { animation-delay: 96ms; }
+html[data-motion='performance'] .data-table tbody tr:nth-child(8) { animation-delay: 112ms; }
+html[data-motion='performance'] .data-table tbody tr:nth-child(9) { animation-delay: 128ms; }
+html[data-motion='performance'] .data-table tbody tr:nth-child(10) { animation-delay: 144ms; }
+
+/* Every dropdown settles row by row after its plate has arrived. */
+html[data-motion='performance'] [role='menu'] > * {
+  animation: row-open 150ms var(--ease-out) backwards;
+}
+
+html[data-motion='performance'] [role='menu'] > *:nth-child(2) { animation-delay: 18ms; }
+html[data-motion='performance'] [role='menu'] > *:nth-child(3) { animation-delay: 36ms; }
+html[data-motion='performance'] [role='menu'] > *:nth-child(4) { animation-delay: 54ms; }
+html[data-motion='performance'] [role='menu'] > *:nth-child(5) { animation-delay: 72ms; }
+html[data-motion='performance'] [role='menu'] > *:nth-child(6) { animation-delay: 90ms; }
+html[data-motion='performance'] [role='menu'] > *:nth-child(7) { animation-delay: 108ms; }
+html[data-motion='performance'] [role='menu'] > *:nth-child(8) { animation-delay: 126ms; }
+
+/* Opt-in hover lift for surfaces that open something (cards, tiles). */
+.motion-lift {
+  transition:
+    transform var(--motion-fast) var(--ease-out),
+    box-shadow var(--motion-base) var(--ease-out),
+    border-color var(--motion-fast) var(--ease-out);
+}
+
+.motion-lift:hover {
+  transform: translateY(var(--motion-lift));
+  box-shadow: var(--shadow-e2);
+}
+
+.motion-lift:active {
+  transform: translateY(0) scale(0.995);
+}
+
+/* ---- Appearance change: the new palette is revealed by a circle that grows out
+   of the control that changed it. theme.js runs the change inside a view
+   transition and pins the circle's centre and radius on <html>; the rules below
+   draw that circle on the incoming frame and hold the outgoing one still
+   beneath it. ---- */
+@keyframes theme-reveal {
+  from { clip-path: circle(0px at var(--reveal-x, 50%) var(--reveal-y, 50%)); }
+  to { clip-path: circle(var(--reveal-radius, 150%) at var(--reveal-x, 50%) var(--reveal-y, 50%)); }
+}
+
+@keyframes icon-morph {
+  from { opacity: 0; transform: rotate(-32deg) scale(0.62); }
+  62% { opacity: 1; transform: rotate(5deg) scale(1.07); }
+  to { opacity: 1; transform: rotate(0deg) scale(1); }
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  /* The browser's own cross-fade would blunt the edge of the circle: the
+     outgoing frame stays fully drawn while the incoming one is clipped over
+     it. */
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-new(root) {
+  animation: theme-reveal 600ms var(--ease-emphasis) both;
+}
+
+/* An icon that stands for a mode arrives with weight when the mode changes: the
+   component keys it on the new value so it is replaced, and this replays. */
+.motion-icon {
+  display: inline-flex;
+  animation: icon-morph var(--motion-slow) var(--ease-spring) backwards;
+}
+
+/* Every control gives a hair under the pointer. */
+html[data-motion='performance'] button:not(:disabled):active,
+html[data-motion='performance'] [role='button']:active {
+  transform: scale(0.985);
+}
+
+/* A light sweeps across a primary surface on hover. */
+.motion-sheen {
+  position: relative;
+  overflow: hidden;
+}
+
+.motion-sheen::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(105deg, transparent 30%, color-mix(in srgb, #fff 22%, transparent) 48%, transparent 66%);
+  transform: translateX(-120%);
+}
+
+.motion-sheen:hover::after {
+  opacity: 1;
+  transform: translateX(120%);
+  transition: transform 620ms var(--ease-out), opacity 200ms var(--ease-out);
+}
+
+/* A quiet breathing dot for live, presence and unread states. */
+@keyframes breathe {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.84); }
+}
+
+.motion-breathe {
+  animation: breathe 2.6s var(--ease-out) infinite;
+}
+
+/* The active navigation marker grows out of the row it belongs to, so moving
+   between pages reads as the marker travelling rather than blinking. */
+@keyframes nav-marker-in {
+  from { opacity: 0; transform: scaleY(0.15); }
+  to { opacity: 1; transform: scaleY(1); }
+}
+
+html[data-motion='performance'] .motion-nav-marker {
+  transform-origin: center;
+  animation: nav-marker-in 280ms var(--ease-emphasis) backwards;
+}
+
+/* ---- Premium arrivals ----------------------------------------------------
+   Small, purposeful entrances: each one plays once, when the element it
+   describes appears or its value changes, and then rests. Nothing loops while
+   somebody is reading, and power save removes every one of them (the rule at
+   the end of this section sets animation: none !important).
+   ------------------------------------------------------------------------- */
+
+/* A count badge lands with weight. Key the element on the count, so a new
+   notification replays the pop instead of the old number sitting still. */
+@keyframes badge-pop {
+  0% { opacity: 0; transform: scale(0.6); }
+  62% { opacity: 1; transform: scale(1.12); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+html[data-motion='performance'] .motion-badge {
+  animation: badge-pop 340ms var(--ease-spring) backwards;
+}
+
+/* Toasts and floating notices rise from the corner they belong to. */
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(12px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+html[data-motion='performance'] .motion-toast {
+  animation: toast-in var(--motion-base) var(--ease-emphasis) backwards;
+}
+
+/* Tables answer the pointer with a quiet jade rule on the row they are on,
+   instead of only changing the row's fill. */
+html[data-motion='performance'] .data-table tbody td:first-child {
+  transition: box-shadow 140ms var(--ease-out);
+}
+
+html[data-motion='performance'] .data-table tbody tr:hover td:first-child {
+  box-shadow: inset 2px 0 0 var(--color-jade-500);
+}
+
+html[dir='rtl'][data-motion='performance'] .data-table tbody tr:hover td:first-child {
+  box-shadow: inset -2px 0 0 var(--color-jade-500);
+}
+
+/* Navigation rows lean toward the page and their icon warms up. */
+.motion-nav {
+  transition:
+    background-color 140ms var(--ease-out),
+    color 140ms var(--ease-out),
+    transform 180ms var(--ease-out);
+}
+
+.motion-nav:hover {
+  transform: translateX(2px);
+}
+
+/* The row leans toward the content, which is on the other side in Arabic. */
+[dir='rtl'] .motion-nav:hover {
+  transform: translateX(-2px);
+}
+
+.motion-nav:active {
+  transform: translateX(0) scale(0.985);
+}
+
+.motion-nav svg {
+  transition: transform 220ms var(--ease-spring), color 140ms var(--ease-out);
+}
+
+.motion-nav:hover svg {
+  transform: scale(1.12) rotate(-3deg);
+}
+
+/* Cards that open something glow at the edge rather than jump. */
+.motion-glow {
+  transition:
+    box-shadow var(--motion-base) var(--ease-out),
+    border-color var(--motion-base) var(--ease-out);
+}
+
+.motion-glow:hover {
+  border-color: color-mix(in srgb, var(--color-jade-500) 45%, var(--color-line-strong));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-jade-500) 28%, transparent), var(--shadow-e2);
+}
+
+/* ---- Power save: the interface changes instantly -------------------------- */
+[data-motion="powersave"] *,
+[data-motion="powersave"] *::before,
+[data-motion="powersave"] *::after {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+}
+
+/* Movement that lives in a hover/press transform, not in an animation. */
+[data-motion="powersave"] .motion-lift:hover,
+[data-motion="powersave"] .motion-lift:active {
+  transform: none !important;
+  box-shadow: var(--shadow-e1) !important;
+}
+
+[data-motion="powersave"] .motion-nav:hover,
+[data-motion="powersave"] .motion-nav:active,
+[data-motion="powersave"] .motion-nav:hover svg,
+[data-motion="powersave"] .motion-sheen:hover::after,
+[data-motion="powersave"] button:not(:disabled):active,
+[data-motion="powersave"] [role="button"]:active {
+  transform: none !important;
+}
+
+/* The system preference is honoured whatever mode is selected. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Legacy helpers still referenced by secondary screens. They are intentionally
+   flat: no floating cards, no gradient washes. */
+.glass-panel {
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+}
+
+.glass-panel-dark {
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+}
+
+.animate-ui-fade { animation: overlay-in 120ms var(--ease-out) both; }
+.animate-ui-zoom { animation: plate-in 160ms var(--ease-out) both; }
+.animate-ui-slide-up { animation: plate-in 160ms var(--ease-out) both; }
+
+/* Flatten residual gradient utilities from screens outside the flagship pass:
+   they must not reintroduce the stock violet-blue look. */
+.bg-gradient-to-r,
+.bg-gradient-to-br,
+.bg-gradient-to-b,
+.bg-gradient-to-t,
+.bg-gradient-to-l {
+  background-image: none !important;
+  background-color: var(--color-jade-solid);
+  color: var(--color-on-jade);
+}
+
+/* The sidebar and login pin their own ink; keep gradients flattened there too. */
+.theme-pinned {
+  --color-white: #f2f0e7;
+}
+
+/* ---- Print / PDF --------------------------------------------------------- */
+@page {
+  size: A4;
+  margin: 16mm 15mm;
+}
+
+@media print {
+  html,
+  body,
+  #root {
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  body {
+    background: #fff !important;
+    color: #111 !important;
+    font-size: 10.5pt;
+  }
+
+  .no-print,
+  aside,
+  header.app-titlebar,
+  .split-handle,
+  .toast-layer {
+    display: none !important;
+  }
+
+  .print-sheet {
+    display: block !important;
+    width: auto;
+    margin: 0;
+    box-shadow: none;
+    border: 0;
+    background: #fff;
+    color: #111;
+  }
+
+  .print-sheet h1,
+  .print-sheet h2,
+  .print-sheet h3 {
+    font-family: var(--font-serif);
+    color: #111;
+    break-after: avoid;
+  }
+
+  .print-sheet table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 9pt;
+  }
+
+  .print-sheet th,
+  .print-sheet td {
+    border-bottom: 0.5pt solid #bbb;
+    padding: 3pt 4pt;
+    text-align: start;
+  }
+
+  .print-sheet thead {
+    display: table-header-group;
+  }
+
+  .print-sheet tr,
+  .print-sheet section {
+    break-inside: avoid;
+  }
+
+  .print-sheet a {
+    color: #111;
+    text-decoration: none;
+  }
+}
+
+/* ---- Search fields ------------------------------------------------------
+   A magnifier is drawn inside the control, so the text has to start after it.
+   `.field` sets `padding: 0 9px` outside any cascade layer, and an unlayered
+   rule beats a `ps-*` utility on the same element — which is why the icon used
+   to sit on top of the placeholder. The inset is restored here, in the logical
+   direction, for every field paired with an inline search icon. */
+div:has(> svg:first-child) > input.field,
+label:has(> svg:first-child) > input.field {
+  padding-inline-start: 26px;
+}
+
+/* ---- Fixed-width filter fields ------------------------------------------
+   `.field` sets `width: 100%` outside any cascade layer, so a `w-[...]`
+   utility on the same input is ignored and the control stretches to the whole
+   row. These are the named widths the filter bars use instead. */
+.field-date {
+  width: 140px;
+}
+
+.field-filter {
+  width: 160px;
+}
+
+/* A toolbar select sized by its options; the `w-auto` utility is inert here. */
+.field-auto {
+  width: auto;
+  max-width: 100%;
+}

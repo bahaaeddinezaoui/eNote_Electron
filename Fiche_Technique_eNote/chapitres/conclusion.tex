@@ -1,0 +1,43 @@
+\chapter*{Conclusion Générale}
+\addcontentsline{toc}{chapter}{Conclusion Générale}
+
+Ce travail a abouti à \appname, une application de bureau de gestion académique conçue pour fonctionner
+intégralement sur le réseau local d'un établissement, sans connexion Internet. Le bilan peut être lu à
+trois niveaux.
+
+Sur le plan fonctionnel, l'application couvre la chaîne complète de la scolarité : inscription et dossier
+de l'élève, structure pédagogique et calendrier, emploi du temps et volumes horaires, séances,
+présences, observations, récompenses et sanctions, examens, surveillance, notes et moyennes, supports de
+cours, bibliothèque documentaire avec revue éditoriale, messagerie interne, notifications et rapports
+imprimés. Les sept rôles identifiés disposent
+chacun d'un périmètre cohérent, et les opérations sensibles sont contrôlées par le serveur plutôt que par
+l'écran qui les affiche.
+
+Sur le plan technique, la séparation entre PostgreSQL, le processus principal et l'interface React
+explique les propriétés obtenues : une donnée unique partagée par tous les postes, des règles
+d'écriture centralisées, une interface qui reste réactive et une génération de documents qui ne dépend
+d'aucun service externe. L'internationalisation à trois langues, avec une lecture de droite à gauche
+réellement prise en charge, des libellés de base traduits et des dates qui suivent la langue de
+l'interface, répond à une exigence courante des établissements et aurait été difficile à ajouter après
+coup.
+
+Sur le plan de l'exploitation, le déploiement a été pensé pour un technicien et non pour un
+développeur : un préréglage machine évite la saisie de la connexion sur chaque poste, un écran de
+configuration précède la connexion, les fichiers partagés sont référencés par des clés relatives, les
+mises à jour se font depuis le partage local avec vérification par empreinte, et la sauvegarde de la
+base est scriptée.
+
+Le travail comporte néanmoins des limites qu'il faut nommer. La première est l'absence de suite de
+tests automatisés dans le dépôt : la validation repose sur des scénarios manuels documentés dans le
+guide de déploiement, ce qui rend une régression plus coûteuse à détecter qu'elle ne le serait avec des
+tests de services et de rendu. La deuxième est la dépendance à un serveur unique : si PostgreSQL ou le
+partage de fichiers s'arrête, tous les postes perdent l'accès aux données et aux médias, même si le
+client continue de fonctionner et signale l'incident. La troisième concerne l'internationalisation :
+les messages produits par le processus principal, construits à partir de la logique métier et des
+erreurs de base, restent en anglais et ne passent pas par les dictionnaires de l'interface. La
+quatrième est l'ergonomie de certaines pages très denses, qui suppose une courte formation pour les
+utilisateurs peu familiers des tableaux de gestion.
+
+Ces limites n'invalident pas l'apport principal : l'établissement dispose désormais d'une source unique
+pour les dossiers, les séances et les résultats, consultable en temps réel par les services concernés,
+sur un réseau qui ne sort pas de ses murs.

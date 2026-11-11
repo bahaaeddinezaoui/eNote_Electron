@@ -1,0 +1,67 @@
+Fichier attendu	Legende de la figure (chapitre 3)
+commun_guide.png	Guide étape par étape d'une page
+commun_videos.png	Tutoriels vidéo classés par rôle
+commun_theme.png	Sélecteur d'apparence et de palette
+commun_langue.png	Interface en arabe, en lecture de droite à gauche
+commun_changelog.png	Journal des modifications
+commun_anomalie.png	Formulaire de signalement d'anomalie
+commun_inbox.png	Boîte de réception
+commun_messages.png	Messagerie directe
+commun_bibliotheque.png	Catalogue de la bibliothèque documentaire
+commun_notifications.png	Centre de notifications
+commun_profil.png	Profil de l'utilisateur
+commun_parametres.png	Page des paramètres
+commun_palette.png	Palette de commandes
+commun_beta.png	Rapport de test bêta
+admin_personnes.png	Registre des personnes
+admin_comptes.png	Liste des comptes
+admin_suspendus.png	Comptes suspendus
+admin_secretaires.png	Droits et périmètre d'un compte secrétaire
+admin_calendrier.png	Gestion des années, semestres et semaines
+admin_filieres.png	Filières, chapitres et leçons
+admin_sections.png	Sections et groupes
+admin_registres.png	Registres de référence et places d'une salle
+admin_examens.png	Verrouillage de la saisie des notes
+admin_statistiques.png	Tableau de bord statistique
+admin_journal.png	Journal d'activité filtré
+admin_diagnostic.png	Console de diagnostic de la base
+admin_options.png	Options globales de l'établissement
+admin_bibliotheque.png	Revue et catégories de la bibliothèque
+directeur_overview.png	Vue d'ensemble du directeur
+directeur_dossier.png	Volet d'inspection d'un dossier d'élève
+directeur_seances.png	Enregistrements d'une semaine
+directeur_assiduite.png	Rapport d'assiduité des enseignants
+directeur_historique.png	Historique des absences et observations
+directeur_global.png	Historique global
+directeur_pdf.png	Rapport individuel au format PDF
+secretariat_portee.png	Bandeau de portée du secrétaire
+secretariat_inscription.png	Formulaire d'inscription d'un élève
+secretariat_dossier.png	Onglets du dossier de l'élève
+secretariat_repertoire.png	Recherche et filtres du répertoire
+secretariat_section.png	Affectation d'élèves à une section
+secretariat_conduite.png	Récompenses et sanctions d'un élève
+secretariat_documents.png	Photo, adresse et uniformes
+enseignant_emploi.png	Emploi du temps de l'enseignant
+enseignant_appel.png	Feuille de présence d'une séance
+enseignant_observation.png	Saisie d'une observation
+enseignant_notes.png	Saisie des notes d'un examen
+enseignant_lecons.png	Supports d'une leçon
+enseignant_bibliotheque.png	Dépôt d'un document dans la bibliothèque
+enseignant_dossier.png	Dossier d'un élève en lecture
+etudiant_emploi.png	Emploi du temps de l'étudiant
+etudiant_notes.png	Notes et moyennes de l'étudiant
+etudiant_lecons.png	Leçons et supports disponibles
+etudiant_bibliotheque.png	Bibliothèque vue par l'étudiant
+etudiant_notifications.png	Centre de notifications
+etudiant_profil.png	Profil de l'étudiant
+planificateur_emploi.png	Emploi du temps général
+planificateur_volume.png	Panneau des volumes horaires
+planificateur_examens.png	Programmation d'un examen
+planificateur_places.png	Disposition des candidats en salle
+planificateur_notes.png	Moyennes semestrielles d'une filière
+developpeur_anomalies.png	File de traitement des anomalies
+developpeur_beta.png	Synthèse des tests bêta
+developpeur_changelog.png	Édition d'une note de version
+developpeur_journal.png	Journal d'activité et détail d'une entrée
+developpeur_diagnostic.png	Console de diagnostic de la base
+developpeur_comptes.png	Comptes et options techniques

@@ -1,0 +1,38 @@
+// French strings for the interface text that still fell back to English: the
+// confirm dialogs of the working pages, the role and bug-triage labels, the
+// language names of the localized inputs, and the empty states and status
+// badges that had an Arabic translation but no French one (batch 18).
+export const fr18 = {
+  "Add a room before scheduling sessions against it.": "Ajoutez une salle avant d’y programmer des séances.",
+  "Add the first academic grade to start the reference table.": "Ajoutez le premier grade académique pour démarrer la table de référence.",
+  "Add the first examination type so sittings can be classified.": "Ajoutez le premier type d’examen pour que les sessions puissent être classées.",
+  "Add the first grade to start the reference table.": "Ajoutez le premier grade pour démarrer la table de référence.",
+  "Admin": "Administrateur",
+  "Are you sure you want to delete this session?": "Voulez-vous vraiment supprimer cette séance ?",
+  "Are you sure you want to delete this student? Their records will be permanently removed.": "Voulez-vous vraiment supprimer cet étudiant ? Ses fiches seront définitivement supprimées.",
+  "Choose another filter to see the rest.": "Choisissez un autre filtre pour voir le reste.",
+  "Clear the search to see every academic grade.": "Effacez la recherche pour voir tous les grades académiques.",
+  "Clear the search to see every examination type.": "Effacez la recherche pour voir tous les types d’examen.",
+  "Clear the search to see every grade.": "Effacez la recherche pour voir tous les grades.",
+  "Delete this examination?": "Voulez-vous supprimer cet examen ?",
+  "Developer": "Développeur",
+  "Director": "Directeur",
+  "Dismissed": "Rejeté",
+  "Documents on file": "Documents au dossier",
+  "File": "Fichier",
+  "Filter by kind": "Filtrer par type",
+  "Insurance card": "Carte d’assurance",
+  "LIVE": "EN DIRECT",
+  "Latin": "latin",
+  "Member": "Membre",
+  "Registry online": "Registre en ligne",
+  "Scheduler": "Planificateur",
+  "Secretary": "Secrétaire",
+  "Solved": "Résolu",
+  "Student": "Étudiant",
+  "Teacher": "Enseignant",
+  "v1.0": "v1.0",
+  "Videos are detected by their extension and can be watched in this page; any file can still be downloaded.": "Les vidéos sont reconnues par leur extension et peuvent être visionnées dans cette page ; tout fichier reste téléchargeable.",
+  "Working offline": "Hors ligne",
+  "All priorities": "Toutes les priorités",
+}

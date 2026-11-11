@@ -1,0 +1,22 @@
+# ==============================================================================
+# eNote Offline LAN Client Authentication Configuration
+# Append these lines to pg_hba.conf (typically in %PGDATA% or C:\Program Files\PostgreSQL\15\data\pg_hba.conf)
+# ==============================================================================
+# TYPE  DATABASE        USER            ADDRESS                 METHOD
+
+# 1. Local connections on the server machine
+host    all             all             127.0.0.1/32            scram-sha-256
+host    all             all             ::1/128                 scram-sha-256
+
+# 2. LAN workstations connecting to 192.214.23.15
+# Adjust the subnet mask if your LAN uses a different mask (e.g., /24 covers 192.214.23.1 to 192.214.23.254)
+host    eNote           enote_app       192.214.23.0/24         scram-sha-256
+host    eNote           postgres        192.214.23.0/24         scram-sha-256
+
+# 3. Optional fallback for wider private ranges (if clients are on 192.168.x.x or 10.x.x.x)
+host    eNote           enote_app       192.168.0.0/16          scram-sha-256
+host    eNote           enote_app       10.0.0.0/8             scram-sha-256
+
+# Note: If your PostgreSQL server uses md5 passwords instead of SCRAM-SHA-256,
+# replace 'scram-sha-256' with 'md5' in the rules above.
+

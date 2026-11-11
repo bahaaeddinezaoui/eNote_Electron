@@ -1,0 +1,45 @@
+\begin{titlepage}
+\thispagestyle{empty}
+\begin{center}
+\centering
+{\Large\textbf{République Algérienne Démocratique et Populaire}}\\[0.8cm]
+\begin{minipage}{0.2\textwidth}
+  \raggedright
+  % Logo gauche : placer le fichier dans images/logo_gauche.png
+  \IfFileExists{images/logo_gauche.png}{\includegraphics[width=2.6cm]{images/logo_gauche.png}}{\fbox{Logo}}
+\end{minipage}
+\hfill
+\begin{minipage}{0.5\textwidth}
+  \centering
+  % À COMPLÉTER : ministère / tutelle
+  {\large Ministère de tutelle}\\[0.2cm]
+  % À COMPLÉTER : direction / organisme de rattachement
+  {\large Direction de rattachement}\\[0.2cm]
+\end{minipage}
+\hfill
+\begin{minipage}{0.2\textwidth}
+  \raggedleft
+  \IfFileExists{images/logo_droite.png}{\includegraphics[width=2.6cm]{images/logo_droite.png}}{\fbox{Logo}}
+\end{minipage}\\[0.4cm]
+{\large\textbf{\orgname}}\\[0.4cm]
+{\large \service}
+\vspace{3cm}
+
+\rule{\textwidth}{1pt}
+\vspace{1cm}
+{\Huge\bfseries Fiche Technique de l'Application}\\[0.3cm]
+{\Huge\bfseries \appname}\\[0.4cm]
+{\Large\textbf{\appsubtitle}}
+\vspace{0.6cm}
+
+\rule{\textwidth}{1pt}
+\vspace{3cm}
+
+\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{p{6cm} p{8cm}}
+\textbf{Réalisé par :} & \service \\
+\end{tabular}
+\vfill
+\large \anneedoc
+\end{center}
+\end{titlepage}

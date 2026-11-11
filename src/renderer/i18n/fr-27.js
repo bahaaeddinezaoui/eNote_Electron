@@ -1,0 +1,27 @@
+export const fr27 = {
+  'Connected to {host}': 'Connecté à {host}',
+  'Not connected': 'Non connecté',
+  'The server address is set by your administrator.': "L'adresse du serveur est configurée par votre administrateur.",
+  'Server settings': 'Paramètres du serveur',
+  'Connection saved. You can sign in now.': 'Connexion enregistrée. Vous pouvez vous connecter maintenant.',
+  'Ask your administrator for these details. The connection is saved on this computer.': 'Demandez ces informations à votre administrateur. La connexion est enregistrée sur cet ordinateur.',
+  'Connection failed': 'Échec de la connexion',
+  'Host': 'Hôte',
+  'Port': 'Port',
+  'Database': 'Base de données',
+  'User': 'Utilisateur',
+  'Password': 'Mot de passe',
+  'Connecting...': 'Connexion en cours...',
+  'Connect': 'Connecter',
+  'Latest uploads': 'Derniers ajouts',
+  'Nothing has been added yet.': "Rien n'a encore été ajouté.",
+  'Popular': 'Les plus consultés',
+  'Last 90 days': '90 derniers jours',
+  'opened once': 'ouvert une fois',
+  'opened {count} times': 'ouvert {count} fois',
+  'No usage recorded yet. Files appear here once they are opened or downloaded.': "Aucune utilisation enregistrée pour le moment. Les fichiers apparaissent ici dès qu'ils sont ouverts ou téléchargés.",
+  'Show in the library': 'Afficher dans la bibliothèque',
+  'Open': 'Ouvrir',
+  'this week': 'cette semaine'
+}
+

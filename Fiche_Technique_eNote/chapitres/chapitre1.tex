@@ -1,0 +1,240 @@
+\chapter{Conception et Présentation de l'Application}
+
+\section{Introduction}
+Ce premier chapitre présente l'application avant d'entrer dans le détail de sa réalisation. Il décrit
+d'abord le plan général sur lequel elle est construite, c'est-à-dire le modèle physique de données qui
+fixe les objets manipulés et leurs relations, puis le diagramme de cas d'utilisation qui relie les
+acteurs aux fonctionnalités. La dernière section expose l'architecture fonctionnelle : sept rôles, un
+domaine d'action distinct pour chacun et des contrôles appliqués à chaque appel.
+
+\section{Plan de l'Application}
+L'application est organisée autour d'un principe simple : tout ce qui est saisi appartient à un élève,
+à une séance ou à une structure de l'établissement. Le plan qui suit montre comment ce principe se
+traduit dans la base de données, puis dans les cas d'utilisation proposés aux acteurs.
+
+\subsection{Diagramme Modèle Physique de Données}
+Le modèle physique de données (\ac{MPD}) représente l'implémentation du \ac{MLD} dans le \ac{SGBD}
+PostgreSQL. La base \texttt{eNote} compte 111 tables, une vue, 157 clés étrangères, 76 séquences,
+34 déclencheurs et 51 fonctions. Ces objets se répartissent en six domaines fonctionnels, qui
+correspondent aux six groupes de pages de l'application.
+
+\begin{longtable}{p{4.2cm} p{10.6cm}}
+\caption{Répartition des tables de la base \texttt{eNote} par domaine fonctionnel}\label{tab:domaines}\\
+\toprule
+\textbf{Domaine} & \textbf{Tables représentatives et rôle} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Domaine} & \textbf{Tables représentatives et rôle} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+Identité et comptes &
+\texttt{person}, \path{person_has_role}, \texttt{user}, \texttt{role}, \path{secretary_detail},
+\path{student_detail}, \path{student_parent_info}, \path{student_emergency_contact},
+\texttt{address}. La personne physique est distincte du compte qui permet de
+se connecter : un même individu peut détenir plusieurs comptes, et ses rôles scolaires sont séparés du
+rôle du compte. \\
+Référentiels &
+\texttt{country}, \texttt{wilaya}, \texttt{daira}, \texttt{commune}, \path{military_grade},
+\path{academic_grade}, \texttt{profession}, \texttt{hobby}, \path{health_status},
+\texttt{relation}, \path{recruitment_source}. Chaque libellé porte ses variantes anglaise, arabe et
+française, et les noms de personnes portent une forme latine et une forme arabe. \\
+Structure pédagogique &
+\texttt{major}, \path{major_category}, \texttt{section}, \path{teaching_section},
+\path{teaching_group}, \texttt{promotion}, \texttt{classroom}, \path{classroom_category},
+\path{study_year}, \path{study_semester}, \path{study_week}, \path{study_day},
+\path{study_session_type}, \path{study_session_time_slot}. C'est le squelette sur lequel
+s'appuient l'emploi du temps, les volumes horaires et les examens. \\
+Enseignement et évaluation &
+\texttt{chapter}, \texttt{lesson}, \texttt{document}, \path{document_type},
+\path{library_category}, \path{library_item}, \path{library_access}, \path{study_session},
+\texttt{examination}, \path{examination_type}, \path{examination_group},
+\path{examination_mark_history}, \path{major_semester_factor},
+\path{major_hourly_volume}. Les fichiers pédagogiques sont référencés par une clé relative et non
+par un chemin absolu, afin que la même base serve tous les postes. \\
+Vie scolaire &
+\path{student_gets_absent}, \path{absence_justification}, \path{observation_motif},
+\path{student_undergoes_observation_by_teacher}, \path{secretary_punishes_student},
+\path{secretary_rewards_student}, \path{punishment_type}, \path{reward_type},
+\path{punishment_justification}, \path{reward_justification}, \path{director_comment}. Chaque
+ligne porte sa date, son auteur et, lorsque c'est pertinent, la séance au cours de laquelle elle a été
+constatée. \\
+Support et exploitation &
+\path{bug_report}, \texttt{changelog}, \texttt{feature}, \path{beta_test_report},
+\path{beta_test_feature}, \texttt{message}, \path{message_recipient},
+\path{direct_conversation}, \path{direct_message}, \path{app_notification},
+\path{app_option}, \path{app_locked_page}, \path{audit_log},
+\path{user_teaching_}\allowbreak\path{category_scope}. Ce domaine porte la messagerie interne, les notifications,
+les préférences globales et le journal d'activité. \\
+\end{longtable}
+
+Le modèle est représenté par la figure \ref{fig:mpd}, qui situe les six domaines et la totalité des
+tables, puis par les figures \ref{fig:mpd_identite} et \ref{fig:mpd_scolarite}, qui détaillent les
+entités centrales, leurs clés et leurs cardinalités. Trois choix de conception méritent d'être
+soulignés. Premièrement, les libellés de référence ne sont pas dupliqués dans les tables métier : une
+section pointe vers une catégorie d'enseignement, qui porte ses trois traductions, ce qui évite qu'une
+correction de libellé devienne une mise à jour de milliers de lignes. Deuxièmement, les noms de
+personnes suivent un schéma à deux variantes -- une translittération latine et la forme arabe -- car un
+nom propre n'a pas de traduction française. Troisièmement, une colonne générée conserve l'alias
+historique de chaque libellé traduit, si bien que les requêtes, les rapports et les tris existants
+continuent de fonctionner pendant que l'interface bascule vers la variante de la langue active.
+
+\begin{figure}[H]
+    \centering
+    \resizebox{\textwidth}{!}{\input{figures/mpd_domaines.tex}}
+    \caption{Carte des domaines du modèle physique de données : 111 tables réparties en six domaines}
+    \label{fig:mpd}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \resizebox{\textwidth}{!}{\input{figures/mpd_identite.tex}}
+    \caption{Modèle physique de données des entités d'identité et de comptes}
+    \label{fig:mpd_identite}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \resizebox{\textwidth}{!}{\input{figures/mpd_scolarite.tex}}
+    \caption{Modèle physique de données des entités de scolarité et d'évaluation}
+    \label{fig:mpd_scolarite}
+\end{figure}
+
+\subsection{Diagramme de Cas d'Utilisation}
+Le diagramme de cas d'utilisation identifie les acteurs et les fonctionnalités mises à leur disposition
+(figure \ref{fig:usecase}). Sept acteurs sont reconnus : l'administrateur, le directeur, le secrétaire,
+l'enseignant, l'étudiant, le planificateur et le développeur. Chaque acteur dispose d'un compte unique,
+et le rôle du compte détermine à la fois les pages accessibles et les opérations autorisées. Deux cas
+sont communs à tous les rôles : travailler pendant une panne du serveur, sur les copies que le poste
+conserve, et reprendre une saisie interrompue.
+
+\begin{itemize}
+    \item \textbf{Administrateur} : gérer les personnes et les comptes, construire le calendrier
+          académique et la structure pédagogique, verrouiller des pages, administrer les mots de passe,
+          consulter les statistiques et le journal d'activité ;
+    \item \textbf{Directeur} : consulter les dossiers en lecture seule, suivre les séances, les
+          absences, les observations et l'assiduité des enseignants, commenter les enregistrements,
+          générer les rapports individuels ;
+    \item \textbf{Secrétaire} : inscrire et mettre à jour les élèves des catégories qui lui sont
+          attribuées, affecter les sections, enregistrer récompenses et sanctions selon ses droits ;
+    \item \textbf{Enseignant} : consulter son emploi du temps, faire l'appel, consigner les
+          observations, saisir les notes d'examen, publier des supports de cours ;
+    \item \textbf{Étudiant} : consulter son emploi du temps, ses notes, les supports de cours et ses
+          notifications ;
+    \item \textbf{Planificateur} : construire l'emploi du temps des catégories qui lui sont confiées,
+          suivre les volumes horaires, programmer les examens et leur disposition en salle ;
+    \item \textbf{Développeur} : traiter les rapports d'anomalie, lire les rapports de test bêta,
+          consulter le journal d'activité et la console de diagnostic de la base.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \resizebox{\textwidth}{!}{\input{figures/usecase.tex}}
+    \caption{Diagramme de cas d'utilisation : sept acteurs métier, un acteur générique et vingt-huit cas}
+    \label{fig:usecase}
+\end{figure}
+
+\section{Architecture Fonctionnelle}
+L'application repose sur une architecture basée sur les rôles (\ac{RBAC}). Chaque utilisateur dispose
+d'un ensemble de fonctionnalités adaptées à ses responsabilités. Le contrôle n'est pas seulement visuel :
+chaque service du processus principal relit le rôle de l'appelant avant d'exécuter une écriture, et une
+route masquée dans l'interface reste néanmoins refusée si elle est appelée directement.
+
+\subsection{Rôle d'Administrateur}
+L'administrateur est capable de :
+\begin{itemize}
+    \item créer, modifier et supprimer les personnes, leur attribuer des rôles scolaires, une photo et
+          un département ;
+    \item gérer les comptes : création, activation, désactivation, modification du nom d'utilisateur, du
+          courriel et du mot de passe, attribution du rôle de compte et des catégories d'enseignement ;
+    \item définir la structure académique : années, semestres, semaines, filières, catégories,
+          sections, groupes, promotions, salles, créneaux et types de séance ;
+    \item paramétrer les options globales : verrouillage de la saisie des notes, autorisation de
+          suppression d'un élève, verrou de suppression des absences après le début d'une séance,
+          pages verrouillées, matrice des messages, testeurs bêta, politique de la bibliothèque
+          (dépôts, revue, téléchargement, catégorie obligatoire, taille maximale) et catégories ;
+    \item consulter les statistiques, les rapports d'anomalie, les rapports de test bêta et le journal
+          d'activité ;
+    \item inspecter la base de données depuis la console de diagnostic, en lecture seule.
+\end{itemize}
+
+\subsection{Rôle de Directeur}
+Le directeur est capable de :
+\begin{itemize}
+    \item consulter le répertoire des élèves et ouvrir un dossier en lecture seule ;
+    \item consulter le catalogue de la bibliothèque documentaire en lecture seule ;
+    \item lire, pour une semaine donnée, les séances avec leurs absences et leurs observations ;
+    \item commenter une absence ou une observation, sachant que tous les directeurs partagent le même
+          fil de commentaires ;
+    \item suivre l'assiduité des enseignants et repérer les séances non tenues ;
+    \item consulter l'historique d'un élève ou l'historique global, avec graphiques et filtres ;
+    \item générer et imprimer le rapport individuel d'un élève au format \ac{PDF}.
+\end{itemize}
+
+\subsection{Rôle de Secrétaire}
+Le secrétaire est capable de :
+\begin{itemize}
+    \item inscrire un nouvel élève et renseigner l'ensemble de son dossier : identité, état civil,
+          adresse, santé, famille, contacts d'urgence, loisirs et unités d'enseignement ;
+    \item mettre à jour la photo et les identifiants d'un élève ;
+    \item affecter un élève à une section et consulter l'historique de ses affectations ;
+    \item enregistrer une récompense ou une sanction, individuellement ou pour un groupe d'élèves ;
+    \item agir uniquement dans les catégories d'enseignement qui lui ont été attribuées, et uniquement
+          dans la limite des droits de conduite accordés à son compte.
+\end{itemize}
+
+\subsection{Rôle d'Enseignant}
+L'enseignant est capable de :
+\begin{itemize}
+    \item consulter son emploi du temps hebdomadaire et la liste des élèves attendus dans une séance ;
+    \item faire l'appel, marquer un élève absent avec sa justification, ou confirmer qu'une séance s'est
+          tenue sans incident ;
+    \item consigner une observation sur un élève présent, avec son motif et son commentaire ;
+    \item saisir les notes des examens de son périmètre et consulter les moyennes calculées ;
+    \item publier des supports de cours : diapositives, polycopiés, images et séances enregistrées ;
+    \item déposer des livres, romans, leçons et vidéos dans la bibliothèque et suivre leur revue ;
+    \item consulter le dossier d'un élève qu'il enseigne, sans pouvoir le modifier.
+\end{itemize}
+
+\subsection{Rôle d'Étudiant}
+L'étudiant est capable de :
+\begin{itemize}
+    \item consulter l'emploi du temps de sa section pour une semaine donnée ;
+    \item consulter ses notes, les moyennes par matière et sa moyenne semestrielle ;
+    \item lire les supports de cours publiés par ses enseignants et visionner les vidéos ;
+    \item consulter la bibliothèque documentaire et télécharger les documents autorisés ;
+    \item consulter ses notifications et ses messages directs ;
+    \item lire sa propre fiche de renseignements et changer sa photo.
+\end{itemize}
+
+\subsection{Rôle de Planificateur}
+Le planificateur est capable de :
+\begin{itemize}
+    \item construire et corriger l'emploi du temps hebdomadaire des catégories qui lui sont confiées ;
+    \item placer une séance dans un créneau libre en choisissant le type, l'enseignant, la salle et le
+          groupe ;
+    \item suivre le volume horaire cible d'un groupe et les heures déjà programmées, par type de séance
+          et par section ;
+    \item programmer un examen et organiser sa disposition en salle : constitution des groupes,
+          répartition des places, désignation des surveillants ;
+    \item consulter les notes d'un examen et les moyennes semestrielles de la filière.
+\end{itemize}
+
+\subsection{Rôle de Développeur}
+Le développeur est capable de :
+\begin{itemize}
+    \item lire et trier les rapports d'anomalie, en changeant leur statut et leur priorité ;
+    \item consulter les rapports de test bêta et les fonctionnalités couvertes par chaque version ;
+    \item administrer la bibliothèque documentaire, ses catégories et sa file de revue ;
+    \item rédiger les notes de version dans le journal des modifications ;
+    \item consulter le journal d'activité et l'exporter au format \ac{CSV} ;
+    \item ouvrir la console de diagnostic de la base et vérifier l'état de la connexion.
+\end{itemize}
+
+\section{Conclusion}
+Ce chapitre a présenté le plan de l'application et son architecture fonctionnelle. La base de données
+compte 111 tables réparties en six domaines, et sept rôles se partagent des périmètres distincts dont
+les frontières sont vérifiées par le serveur. Le chapitre suivant décrit l'environnement et les choix
+techniques qui rendent cette organisation opérationnelle sur un réseau local isolé.

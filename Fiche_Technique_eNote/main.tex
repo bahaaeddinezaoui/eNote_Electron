@@ -1,0 +1,93 @@
+\documentclass[12pt,a4paper,oneside]{report}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% PARAMÈTRES DE L'APPLICATION (à renseigner)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\appname}{eNote}
+\newcommand{\appsubtitle}{Gestion académique hors ligne pour les établissements scolaires}
+% À COMPLÉTER : sigle officiel de l'établissement
+\newcommand{\orgsigle}{Établissement}
+% À COMPLÉTER : nom complet de l'établissement
+\newcommand{\orgname}{Établissement de rattachement}
+% À COMPLÉTER : service auteur du document
+\newcommand{\service}{Service de rattachement}
+% À COMPLÉTER : année de rédaction
+\newcommand{\anneedoc}{2026}
+
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+% xcolor est chargé par tikz sans option ; l'option table doit être
+% transmise avant, sinon LaTeX signale un conflit d'options.
+\PassOptionsToPackage{table}{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{positioning,arrows.meta,fit,backgrounds,calc,shapes.geometric}
+\usepackage{varwidth}
+\usepackage[a4paper,left=2.5cm,right=2.5cm,top=2.5cm,bottom=2.5cm]{geometry}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{longtable}
+\usepackage{tabularx}
+\usepackage[table]{xcolor}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{acronym}
+\usepackage{setspace}
+\onehalfspacing
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue,urlcolor=blue,citecolor=blue}
+\usepackage{fancyhdr}
+\setlength{\headheight}{14.5pt}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\orgsigle}
+\fancyhead[R]{\MakeUppercase{\service}}
+\fancyfoot[C]{\thepage}
+\usepackage{titlesec}
+
+\begin{document}
+\sloppy
+\input{page_garde}
+
+\tableofcontents
+\listoffigures
+
+\chapter*{Liste des Acronymes}
+% Déclarer ici TOUS les sigles utilisés avec \ac{...} dans le document.
+\begin{acronym}[HTTPS]
+    \acro{API}{Application Programming Interface}
+    \acro{CSV}{Comma-Separated Values}
+    \acro{ESM}{ECMAScript Modules}
+    \acro{HTML}{HyperText Markup Language}
+    \acro{CSS}{Cascading Style Sheets}
+    \acro{HTTP}{HyperText Transfer Protocol}
+    \acro{HTTPS}{HyperText Transfer Protocol Secure}
+    \acro{IPC}{Inter-Process Communication}
+    \acro{IPv4}{Internet Protocol version 4}
+    \acro{JSON}{JavaScript Object Notation}
+    \acro{LAN}{Local Area Network}
+    \acro{MLD}{Modèle Logique de Données}
+    \acro{MPD}{Modèle Physique de Données}
+    \acro{PDF}{Portable Document Format}
+    \acro{RBAC}{Role-Based Access Control}
+    \acro{RTL}{Right-To-Left}
+    \acro{SGBD}{Système de Gestion de Base de Données}
+    \acro{SMB}{Server Message Block}
+    \acro{SPA}{Single Page Application}
+    \acro{SQL}{Structured Query Language}
+    \acro{TCP}{Transmission Control Protocol}
+    \acro{UTF-8}{Unicode Transformation Format 8-bit}
+\end{acronym}
+\clearpage
+
+\include{chapitres/Introduction Générale}
+\include{chapitres/chapitre1}
+\include{chapitres/chapitre2}
+\include{chapitres/chapitre3}
+\include{chapitres/conclusion}
+\include{chapitres/Perspectives}
+
+\appendix
+\include{chapitres/annexes}
+\end{document}

@@ -1,0 +1,11 @@
+{
+  "host": "192.214.23.15",
+  "port": 5432,
+  "database": "eNote",
+  "user": "enote_app",
+  "password": "CHANGE_ME_PASSWORD",
+  "ssl": false,
+  "storageRoot": "\\\\192.214.23.15\\eNoteFiles",
+  "smbUser": "enote_files",
+  "smbPassword": "CHANGE_ME_SHARE_PASSWORD"
+}

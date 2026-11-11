@@ -1,0 +1,23 @@
+export const ar25 = {
+  'Lecture': 'محاضرة',
+  'Practical': 'أعمال تطبيقية',
+  'Seminar': 'ندوة',
+  'Worklab': 'ورشة عمل',
+  'records shown': 'سجل معروض',
+  'Arabic + French': 'العربية + الفرنسية',
+  'Arabic + English': 'العربية + الإنجليزية',
+  'Bilingual reports print the complete report in both languages, Arabic first, each starting on a new page.': 'تُطبع التقارير ثنائية اللغة بالكامل باللغتين، العربية أولاً، وتبدأ كل لغة في صفحة جديدة.',
+  "Pick the consulate's country: it becomes the student's emergency contact automatically, and the number stays optional.": 'اختر بلد القنصلية: يصبح تلقائيًا جهة اتصال الطالب في حالات الطوارئ، ويبقى رقم الهاتف اختياريًا.',
+  'Password strength': 'قوة كلمة المرور',
+  'Very weak': 'ضعيفة جدًا',
+  'Weak': 'ضعيفة',
+  'Fair': 'متوسطة',
+  'Good': 'جيدة',
+  'Strong': 'قوية',
+  'At least {count} characters': 'على الأقل {count} أحرف',
+  'One capital letter': 'حرف كبير واحد',
+  'One lowercase letter': 'حرف صغير واحد',
+  'One number': 'رقم واحد',
+  'At least 8 characters': '8 أحرف على الأقل',
+  'Use at least 8 characters, including a capital letter, a lowercase letter and a number.': 'استخدم 8 أحرف على الأقل، تتضمن حرفًا كبيرًا وحرفًا صغيرًا ورقمًا.'
+}

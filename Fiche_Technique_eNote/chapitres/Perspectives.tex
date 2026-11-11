@@ -1,0 +1,24 @@
+\chapter*{Perspectives}
+\addcontentsline{toc}{chapter}{Perspectives}
+
+Les évolutions suivantes prolongent le travail réalisé sans en changer l'architecture :
+\begin{itemize}
+    \item \textbf{Automatiser la vérification} : ajouter une suite de tests des services du processus
+          principal (authentification, portée des secrétaires, calcul des moyennes, génération des
+          rapports) et des tests de rendu des écrans critiques, puis l'exécuter avant chaque
+          publication ;
+    \item \textbf{Superviser le serveur depuis l'application} : exposer dans la page de diagnostic
+          l'état du service PostgreSQL, l'espace disque du partage, l'âge de la dernière sauvegarde
+          réussie et une alerte lorsque la sauvegarde a échoué ;
+    \item \textbf{Compléter l'internationalisation} : faire passer les messages d'erreur du processus
+          principal par des codes traduisibles, afin que l'anglais ne reste plus la seule langue des
+          refus et des validations ;
+    \item \textbf{Assister la planification} : signaler automatiquement les conflits de salle, de
+          groupe et d'enseignant avant l'enregistrement d'une séance, et proposer les créneaux libres
+          qui respectent le volume horaire restant ;
+    \item \textbf{Étendre la consultation hors du poste} : publier en lecture seule, sur le réseau
+          local, l'emploi du temps et les notes d'un étudiant, sans ouvrir l'application complète ;
+    \item \textbf{Généraliser la mise à jour automatique} : appliquer aux postes Linux la vérification
+          par empreinte et l'installation depuis le partage déjà disponibles sur Windows, afin que
+          l'ensemble du parc se mette à jour de la même manière.
+\end{itemize}

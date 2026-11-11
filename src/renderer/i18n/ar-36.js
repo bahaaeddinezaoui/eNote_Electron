@@ -1,0 +1,10 @@
+// Arabic interface strings for recording any role on a person in the People
+// form, and for the note that says such a record grants no account permission.
+export const ar36 = {
+  "Directors follow absences, observations and the oversight pages. This records who the person is; the role they sign in with is set on the Accounts page.": "يتابع المديرون الغيابات والملاحظات وصفحات الإشراف. هذا يسجّل هوية الشخص؛ أما الدور الذي يسجّل به الدخول فيُضبط في صفحة الحسابات.",
+  "Secretaries look after student records and the conduct ledger. This records who the person is; the role they sign in with is set on the Accounts page.": "يتولى الأمناء سجلات الطلاب وسجل السلوك. هذا يسجّل هوية الشخص؛ أما الدور الذي يسجّل به الدخول فيُضبط في صفحة الحسابات.",
+  "Schedulers build and maintain the timetable. This records who the person is; the role they sign in with is set on the Accounts page.": "يبني منسّقو الجداول الجدول الدراسي ويصونونه. هذا يسجّل هوية الشخص؛ أما الدور الذي يسجّل به الدخول فيُضبط في صفحة الحسابات.",
+  "Administrators manage the application itself. This records who the person is; the role they sign in with is set on the Accounts page.": "يدير مسؤولو النظام التطبيق نفسه. هذا يسجّل هوية الشخص؛ أما الدور الذي يسجّل به الدخول فيُضبط في صفحة الحسابات.",
+  "Developers maintain the installation and its releases. This records who the person is; the role they sign in with is set on the Accounts page.": "يتولى المطوّرون صيانة التثبيت وإصداراته. هذا يسجّل هوية الشخص؛ أما الدور الذي يسجّل به الدخول فيُضبط في صفحة الحسابات.",
+  "A person can hold several roles at once; each is kept on its own, so ticking one never clears another. What is ticked here describes the person and gives no sign-in account any permission — the role an account signs in with is set on the Accounts page.": "يمكن للشخص أن يحمل عدة أدوار في الوقت نفسه؛ يُحفظ كل دور على حدة، لذا فإن تحديد أحدها لا يلغي غيره. ما يُحدَّد هنا يصف الشخص ولا يمنح أي حساب صلاحية — أما الدور الذي يسجّل به الحساب الدخول فيُضبط في صفحة الحسابات."
+}

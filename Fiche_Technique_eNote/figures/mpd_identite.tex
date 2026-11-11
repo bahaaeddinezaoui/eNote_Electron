@@ -1,0 +1,71 @@
+% MPD détaillé, généré depuis le schéma PostgreSQL.
+\begin{tikzpicture}[font=\scriptsize]
+\tikzset{ent/.style={draw=black!65, rounded corners=2pt, fill=white, inner sep=2pt, align=left},
+  lien/.style={-Latex, draw=black!55, line width=0.4pt}}
+\node[ent, anchor=north west] (user) at (0,0) {%
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.85cm}>{\raggedright\arraybackslash}p{0.9cm}@{}}
+\rowcolor{blue!8}\multicolumn{2}{@{}l}{\tiny\textbf{user}}\\[1pt]
+{\tiny PK user\_\allowbreak{}id} & {\tiny int}\\
+{\tiny person\_\allowbreak{}id} & {\tiny bigint}\\
+{\tiny user\_\allowbreak{}username} & {\tiny varchar}\\
+{\tiny user\_\allowbreak{}password\_\allowbreak{}hash} & {\tiny varchar}\\
+{\tiny user\_\allowbreak{}email} & {\tiny varchar}\\
+{\tiny is\_\allowbreak{}active} & {\tiny bool}\\
+{\tiny created\_\allowbreak{}at} & {\tiny ts}\\
+\end{tabular}};
+\node[ent, anchor=north west] (person) at (4.4,0) {%
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.85cm}>{\raggedright\arraybackslash}p{0.9cm}@{}}
+\rowcolor{blue!8}\multicolumn{2}{@{}l}{\tiny\textbf{person}}\\[1pt]
+{\tiny PK person\_\allowbreak{}id} & {\tiny bigint}\\
+{\tiny FK academic\_\allowbreak{}grade\_\allowbreak{}id} & {\tiny int}\\
+{\tiny FK person\_\allowbreak{}grade\_\allowbreak{}id} & {\tiny int}\\
+{\tiny person\_\allowbreak{}birthdate} & {\tiny date}\\
+{\tiny person\_\allowbreak{}sex} & {\tiny varchar}\\
+{\tiny military\_\allowbreak{}grade\_\allowbreak{}id} & {\tiny int}\\
+{\tiny person\_\allowbreak{}photo} & {\tiny varchar}\\
+\end{tabular}};
+\node[ent, anchor=north west] (person_has_role) at (8.8,0) {%
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.85cm}>{\raggedright\arraybackslash}p{0.9cm}@{}}
+\rowcolor{blue!8}\multicolumn{2}{@{}l}{\tiny\textbf{person\_\allowbreak{}has\_\allowbreak{}role}}\\[1pt]
+{\tiny PK/FK person\_\allowbreak{}id} & {\tiny bigint}\\
+{\tiny PK/FK role\_\allowbreak{}id} & {\tiny int}\\
+{\tiny PK role\_\allowbreak{}start\_\allowbreak{}date} & {\tiny date}\\
+{\tiny FK department\_\allowbreak{}id} & {\tiny int}\\
+{\tiny role\_\allowbreak{}end\_\allowbreak{}date} & {\tiny date}\\
+\end{tabular}};
+\node[ent, anchor=north west] (role) at (13.2,0) {%
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.85cm}>{\raggedright\arraybackslash}p{0.9cm}@{}}
+\rowcolor{blue!8}\multicolumn{2}{@{}l}{\tiny\textbf{role}}\\[1pt]
+{\tiny PK role\_\allowbreak{}id} & {\tiny int}\\
+{\tiny role\_\allowbreak{}code} & {\tiny varchar}\\
+{\tiny role\_\allowbreak{}label\_\allowbreak{}en} & {\tiny varchar}\\
+{\tiny role\_\allowbreak{}label\_\allowbreak{}ar} & {\tiny varchar}\\
+\end{tabular}};
+\node[ent, anchor=north west] (student_detail) at (4.4,-4.1) {%
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.85cm}>{\raggedright\arraybackslash}p{0.9cm}@{}}
+\rowcolor{blue!8}\multicolumn{2}{@{}l}{\tiny\textbf{student\_\allowbreak{}detail}}\\[1pt]
+{\tiny PK/FK person\_\allowbreak{}id} & {\tiny bigint}\\
+{\tiny FK section\_\allowbreak{}id} & {\tiny int}\\
+{\tiny FK student\_\allowbreak{}speciality\_\allowbreak{}id} & {\tiny int}\\
+{\tiny FK student\_\allowbreak{}academic\_\allowbreak{}level\_\allowbreak{}id} & {\tiny int}\\
+{\tiny FK student\_\allowbreak{}health\_\allowbreak{}status\_\allowbreak{}id} & {\tiny int}\\
+{\tiny FK student\_\allowbreak{}army\_\allowbreak{}id} & {\tiny int}\\
+{\tiny FK student\_\allowbreak{}birth\_\allowbreak{}place\_\allowbreak{}id} & {\tiny int}\\
+{\tiny FK student\_\allowbreak{}personal\_\allowbreak{}address\_\allowbreak{}id} & {\tiny int}\\
+\end{tabular}};
+\node[ent, anchor=north west] (section) at (8.8,-4.1) {%
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.85cm}>{\raggedright\arraybackslash}p{0.9cm}@{}}
+\rowcolor{blue!8}\multicolumn{2}{@{}l}{\tiny\textbf{section}}\\[1pt]
+{\tiny PK section\_\allowbreak{}id} & {\tiny int}\\
+{\tiny FK promotion\_\allowbreak{}id} & {\tiny int}\\
+{\tiny FK teaching\_\allowbreak{}category\_\allowbreak{}id} & {\tiny int}\\
+{\tiny section\_\allowbreak{}code} & {\tiny varchar}\\
+{\tiny section\_\allowbreak{}label\_\allowbreak{}en} & {\tiny varchar}\\
+{\tiny section\_\allowbreak{}label\_\allowbreak{}ar} & {\tiny varchar}\\
+\end{tabular}};
+\draw[lien] (person.east) -- node[above, font=\tiny, inner sep=1pt] {N} (person_has_role.west);
+\draw[lien] (person_has_role.east) -- node[above, font=\tiny, inner sep=1pt] {N} (role.west);
+\draw[lien, dashed] (person.west) -- node[above, font=\tiny, inner sep=1pt] {0,1} node[below, font=\tiny, inner sep=1pt] {lien applicatif} (user.east);
+\draw[lien] (person.south) -- node[right, font=\tiny, inner sep=1pt] {N} (student_detail.north);
+\draw[lien] (student_detail.east) -- node[above, font=\tiny, inner sep=1pt] {N} (section.west);
+\end{tikzpicture}

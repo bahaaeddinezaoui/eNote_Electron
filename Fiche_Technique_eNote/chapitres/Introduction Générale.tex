@@ -1,0 +1,81 @@
+\chapter*{Introduction Générale}
+\addcontentsline{toc}{chapter}{Introduction Générale}
+
+\section*{Contexte}
+La gestion de la scolarité d'un établissement d'enseignement repose sur un ensemble d'opérations
+quotidiennes : inscription et mise à jour des dossiers des élèves, constitution des sections et des
+groupes, élaboration des emplois du temps, saisie des présences, consignation des observations et des
+sanctions, organisation des examens et publication des notes. Ces opérations produisent chacune un
+document, et ces documents sont traditionnellement tenus sur papier ou répartis dans des classeurs
+tableurs propres à chaque service. La conséquence est connue : la même information existe en plusieurs
+exemplaires qui divergent, une recherche dans les archives prend plusieurs minutes, et le responsable
+pédagogique ne dispose jamais d'une vue d'ensemble au moment où il doit décider.
+
+La transformation numérique du secteur éducatif apporte une réponse à cette fragmentation, mais elle se
+heurte dans de nombreux établissements à une contrainte matérielle : l'absence de connexion Internet,
+ou l'interdiction d'exposer des données nominatives d'élèves sur un réseau public. Une application
+hébergée sur un serveur web distant est alors inutilisable, et une application purement locale sur un
+poste unique ne permet pas le travail simultané de plusieurs services.
+
+\textbf{\appname} a été conçue pour ce contexte précis. Il s'agit d'une application de bureau qui
+s'installe sur chaque poste de travail et se connecte, à travers le réseau local de l'établissement, à
+une base de données PostgreSQL unique installée sur un serveur interne. Aucune requête ne quitte le
+réseau : ni les polices de caractères, ni les rapports imprimés, ni les photos des élèves ne dépendent
+d'un service externe. Le poste de travail ne fait que présenter et saisir l'information ; la vérité est
+centralisée, partagée et sauvegardée sur le serveur.
+
+\section*{Problématique}
+La gestion actuelle, lorsqu'elle s'appuie sur le papier et sur des fichiers dispersés, présente quatre
+limites structurantes. D'abord, la \textbf{duplication} : un élève change de section, mais son ancienne
+affectation reste inscrite dans le registre du secrétariat et dans le tableau du professeur. Ensuite,
+la \textbf{lenteur} : retrouver l'historique des absences d'un élève avant un conseil de discipline
+suppose de feuilleter plusieurs registres. Puis l'\textbf{absence de contrôle} : rien n'empêche un
+utilisateur non habilité de modifier une note ou de supprimer une sanction, et aucune trace ne
+conserve l'identité de celui qui a écrit une ligne. Enfin, la \textbf{fragilité} : un classeur égaré ou
+un disque défaillant efface des années de scolarité, faute de sauvegarde organisée.
+
+\textbf{Question de recherche : comment concevoir et développer une application de gestion académique
+fonctionnant intégralement hors ligne sur le réseau local d'un établissement, qui centralise les
+dossiers des élèves, la structure pédagogique, les emplois du temps, les évaluations et la vie
+scolaire, tout en garantissant la sécurité des accès et la traçabilité des opérations ?}
+
+\section*{Objectifs de l'Application}
+L'objectif principal de cette application, nommée \textbf{\appname}, est de fournir aux services d'un
+établissement un outil unique de gestion de la scolarité, utilisable sans connexion Internet, dont
+chaque profil ne voit et ne modifie que ce qui relève de sa responsabilité.
+
+Les objectifs spécifiques sont les suivants :
+\begin{itemize}
+    \item Remplacer les registres papier par un dossier numérique unique par élève, couvrant l'identité,
+          l'état civil, la santé, la famille, les contacts d'urgence, la scolarité et les unités
+          d'enseignement ;
+    \item Structurer l'établissement dans la base : année d'études, semestres, semaines, filières,
+          sections, groupes, salles et créneaux, afin que l'emploi du temps et les examens s'appuient sur
+          un référentiel unique ;
+    \item Enregistrer la vie scolaire au fil des séances : présences, justifications d'absence, motifs
+          d'observation, récompenses et sanctions, avec leur historique consultable ;
+    \item Organiser les examens, la répartition des candidats, la surveillance et la saisie des notes,
+          puis calculer les moyennes semestrielles selon les coefficients ;
+    \item Constituer une bibliothèque documentaire partagée : livres, romans, leçons et vidéos,
+          avec catégories, publics, revue éditoriale et notifications ;
+    \item Centraliser les informations dans une base de données unique, sauvegardée sur le serveur de
+          l'établissement ;
+    \item Garantir la sécurité des données grâce à un système d'authentification, à une gestion des
+          comptes par l'administrateur et à un contrôle d'accès par rôle vérifié côté serveur ;
+    \item Offrir une interface ergonomique, intuitive et accessible, disponible en anglais, en arabe et
+          en français, avec un affichage adapté à la lecture de droite à gauche.
+\end{itemize}
+
+\section*{Organisation du Rapport}
+Le rapport de ce projet est organisé de la façon suivante :
+\begin{itemize}
+    \item \textbf{Chapitre 1}, intitulé \textbf{Conception et Présentation de l'Application}, est dédié à
+          la présentation générale de l'application, au modèle physique de données, au diagramme de cas
+          d'utilisation et à l'architecture fonctionnelle basée sur les rôles ;
+    \item \textbf{Chapitre 2}, intitulé \textbf{Réalisation de l'Application}, présente l'environnement de
+          développement et l'architecture de la solution : processus principal, pont de communication,
+          interface, internationalisation, génération des rapports et type d'application ;
+    \item \textbf{Chapitre 3}, intitulé \textbf{Guide d'Utilisation de l'Application}, regroupe le guide
+          d'installation sur le serveur et sur les postes clients, les fonctionnalités communes, puis le
+          guide d'utilisation structuré selon les sept rôles de l'application.
+\end{itemize}

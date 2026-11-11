@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>eNote - Educational Management System</title>
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; font-src 'self'; media-src 'self' lesson-media:; connect-src 'self' lesson-media:"
+    />
+    <!-- Applies the saved/system theme before first paint (CSP-safe, no inline scripts).
+         vite-ignore keeps Vite from trying to bundle a classic script it cannot handle:
+         the file is a public asset, copied as-is, and it must stay classic so it runs
+         ahead of the first paint. The attribute is stripped from the build output. -->
+    <script src="./theme-init.js" vite-ignore></script>
+  </head>
+
+  <body>
+    <div id="root"></div>
+    <script type="module" src="./main.jsx"></script>
+  </body>
+</html>

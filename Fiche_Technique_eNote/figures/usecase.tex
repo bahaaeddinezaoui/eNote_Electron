@@ -1,0 +1,118 @@
+% Diagramme de cas d'utilisation : deux colonnes, liens en peigne sans traverser les ellipses.
+\newcommand{\acteur}[2]{%
+  \begin{scope}[shift={#1}]
+    \draw[line width=0.5pt] (0,0.32) circle (0.10);
+    \draw[line width=0.5pt] (0,0.22) -- (0,-0.05);
+    \draw[line width=0.5pt] (-0.16,0.06) -- (0.16,0.06);
+    \draw[line width=0.5pt] (0,-0.05) -- (-0.12,-0.30);
+    \draw[line width=0.5pt] (0,-0.05) -- (0.12,-0.30);
+    \node[font=\scriptsize, align=center, text width=2.2cm] at (0,-0.58) {#2};
+  \end{scope}%
+}
+\begin{tikzpicture}[font=\scriptsize,
+  uc/.style={draw=black!55, ellipse, fill=white, align=center, text width=3.5cm, inner sep=1pt, minimum height=0.74cm},
+  lien/.style={draw=black!35, line width=0.35pt}]
+\draw[draw=black!45, rounded corners=3pt] (3.8,-6.05) rectangle (15.2,10.35);
+\node[anchor=south, font=\scriptsize\bfseries] at (9.5,10.35) {eNote};
+
+% colonne de gauche : administration, secretariat, enseignement, fonctions communes
+\node[uc, fill=blue!10] (uc1) at (6.8,9.9) {Gérer les personnes};
+\node[uc, fill=blue!10] (uc2) at (6.8,8.8) {Gérer les comptes};
+\node[uc, fill=blue!10] (uc3) at (6.8,7.7) {Définir la structure};
+\node[uc, fill=blue!10] (uc4) at (6.8,6.6) {Paramétrer les options};
+\node[uc, fill=blue!10] (uc5) at (6.8,5.5) {Statistiques et journal};
+\node[uc, fill=orange!16] (uc6) at (6.8,4.4) {Inscrire un élève};
+\node[uc, fill=orange!16] (uc7) at (6.8,3.3) {Mettre à jour un dossier};
+\node[uc, fill=orange!16] (uc8) at (6.8,2.2) {Récompense ou sanction};
+\node[uc, fill=green!12] (uc9) at (6.8,1.1) {Faire l'appel};
+\node[uc, fill=green!12] (uc10) at (6.8,0.0) {Saisir les notes};
+\node[uc, fill=green!12] (uc11) at (6.8,-1.1) {Publier un support};
+\node[uc, fill=black!7] (uc12) at (6.8,-2.2) {Choisir langue et apparence};
+\node[uc, fill=black!7] (uc13) at (6.8,-3.3) {Signaler une anomalie};
+\node[uc, fill=black!7] (uc27) at (6.8,-4.4) {Travailler pendant une panne};
+\node[uc, fill=black!7] (uc28) at (6.8,-5.5) {Reprendre une saisie};",
+
+% colonne de droite : etudiants, direction, planification, developpement
+\node[uc, fill=violet!12] (uc14) at (12.2,9.9) {Emploi du temps et notes};
+\node[uc, fill=violet!12] (uc15) at (12.2,8.8) {Lire les supports};
+\node[uc, fill=violet!12] (uc16) at (12.2,7.7) {Gérer son profil};
+\node[uc, fill=cyan!14] (uc17) at (12.2,6.6) {Consulter un dossier};
+\node[uc, fill=cyan!14] (uc18) at (12.2,5.5) {Suivre les séances};
+\node[uc, fill=cyan!14] (uc19) at (12.2,4.4) {Assiduité des enseignants};
+\node[uc, fill=cyan!14] (uc20) at (12.2,3.3) {Générer un rapport PDF};
+\node[uc, fill=brown!14] (uc21) at (12.2,2.2) {Construire l'emploi du temps};
+\node[uc, fill=brown!14] (uc22) at (12.2,1.1) {Suivre les volumes horaires};
+\node[uc, fill=brown!14] (uc23) at (12.2,0.0) {Programmer un examen};
+\node[uc, fill=red!10] (uc24) at (12.2,-1.1) {Traiter les anomalies};
+\node[uc, fill=red!10] (uc25) at (12.2,-2.2) {Exploiter les tests bêta};
+\node[uc, fill=red!10] (uc26) at (12.2,-3.3) {Console de diagnostic};
+
+% liens acteur -> cas : un peigne par groupe, a l'ecart des ellipses
+\draw[lien] (1.45,7.7) -- (4.55,7.7);
+\draw[lien] (4.55,0 |- uc1.west) -- (4.55,0 |- uc5.west);
+\foreach \n in {uc1,uc2,uc3,uc4,uc5} { \draw[lien] (4.55,0 |- \n.west) -- (\n.west); }
+
+\draw[lien] (1.45,3.3) -- (4.55,3.3);
+\draw[lien] (4.55,0 |- uc6.west) -- (4.55,0 |- uc8.west);
+\foreach \n in {uc6,uc7,uc8} { \draw[lien] (4.55,0 |- \n.west) -- (\n.west); }
+
+\draw[lien] (1.45,0.0) -- (4.55,0.0);
+\draw[lien] (4.55,0 |- uc9.west) -- (4.55,0 |- uc11.west);
+\foreach \n in {uc9,uc10,uc11} { \draw[lien] (4.55,0 |- \n.west) -- (\n.west); }
+
+\draw[lien] (1.45,-2.75) -- (4.55,-2.75);
+\draw[lien] (4.55,0 |- uc12.west) -- (4.55,0 |- uc28.west);
+\foreach \n in {uc12,uc13,uc27,uc28} { \draw[lien] (4.55,0 |- \n.west) -- (\n.west); }
+
+\draw[lien] (17.15,8.8) -- (14.45,8.8);
+\draw[lien] (14.45,0 |- uc14.east) -- (14.45,0 |- uc16.east);
+\foreach \n in {uc14,uc15,uc16} { \draw[lien] (14.45,0 |- \n.east) -- (\n.east); }
+
+\draw[lien] (17.15,4.95) -- (14.45,4.95);
+\draw[lien] (14.45,0 |- uc17.east) -- (14.45,0 |- uc20.east);
+\foreach \n in {uc17,uc18,uc19,uc20} { \draw[lien] (14.45,0 |- \n.east) -- (\n.east); }
+
+\draw[lien] (17.15,1.1) -- (14.45,1.1);
+\draw[lien] (14.45,0 |- uc21.east) -- (14.45,0 |- uc23.east);
+\foreach \n in {uc21,uc22,uc23} { \draw[lien] (14.45,0 |- \n.east) -- (\n.east); }
+
+\draw[lien] (17.15,-2.2) -- (14.45,-2.2);
+\draw[lien] (14.45,0 |- uc24.east) -- (14.45,0 |- uc26.east);
+\foreach \n in {uc24,uc25,uc26} { \draw[lien] (14.45,0 |- \n.east) -- (\n.east); }
+
+% acteurs, places face a leur colonne
+\coordinate (aadmin) at (1.45,7.7);
+\coordinate (asec) at (1.45,3.3);
+\coordinate (ateach) at (1.45,0.0);
+\coordinate (aall) at (1.45,-2.75);
+\coordinate (astud) at (17.15,8.8);
+\coordinate (adir) at (17.15,4.95);
+\coordinate (asched) at (17.15,1.1);
+\coordinate (adev) at (17.15,-2.2);
+\acteur{(1.45,7.7)}{Administrateur}
+\acteur{(1.45,3.3)}{Secrétaire}
+\acteur{(1.45,0.0)}{Enseignant}
+\acteur{(1.45,-2.75)}{Utilisateur}
+\acteur{(17.15,8.8)}{Étudiant}
+\acteur{(17.15,4.95)}{Directeur}
+\acteur{(17.15,1.1)}{Planificateur}
+\acteur{(17.15,-2.2)}{Développeur}
+
+% légende
+\fill[blue!10, draw=black!40] (3.9,-6.55) rectangle ++(0.32,0.18);
+\node[right, font=\scriptsize, inner sep=2pt] at (4.2,-6.46) {Admin.};
+\fill[orange!16, draw=black!40] (7.1,-6.55) rectangle ++(0.32,0.18);
+\node[right, font=\scriptsize, inner sep=2pt] at (7.4,-6.46) {Secrétaire};
+\fill[green!12, draw=black!40] (10.0,-6.55) rectangle ++(0.32,0.18);
+\node[right, font=\scriptsize, inner sep=2pt] at (10.3,-6.46) {Enseignant};
+\fill[violet!12, draw=black!40] (13.1,-6.55) rectangle ++(0.32,0.18);
+\node[right, font=\scriptsize, inner sep=2pt] at (13.4,-6.46) {Étudiant};
+\fill[cyan!14, draw=black!40] (3.9,-7.05) rectangle ++(0.32,0.18);
+\node[right, font=\scriptsize, inner sep=2pt] at (4.2,-6.96) {Directeur};
+\fill[brown!14, draw=black!40] (7.1,-7.05) rectangle ++(0.32,0.18);
+\node[right, font=\scriptsize, inner sep=2pt] at (7.4,-6.96) {Planif.};
+\fill[red!10, draw=black!40] (10.0,-7.05) rectangle ++(0.32,0.18);
+\node[right, font=\scriptsize, inner sep=2pt] at (10.3,-6.96) {Dév.};
+\fill[black!7, draw=black!40] (13.1,-7.05) rectangle ++(0.32,0.18);
+\node[right, font=\scriptsize, inner sep=2pt] at (13.4,-6.96) {Communs};
+\end{tikzpicture}

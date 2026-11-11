@@ -1,0 +1,99 @@
+-- ==============================================================================
+-- 23-drop-person-history.sql
+--
+-- Drops the unused `person_history` audit table, its trigger and its trigger
+-- function.
+--
+-- Why: the table was inherited from the original iStudy/edutrack schema. Its
+-- only writer is `after_person_update_history_func()`, which inserts the *old*
+-- Latin/Arabic first and last names whenever a person's name changes. Nothing
+-- in the application reads it:
+--
+--   * no service, IPC handler, renderer page, report or export queries it;
+--   * the Student History page is built from student_section_history, absences,
+--     observations, rewards and punishments, not from this table;
+--   * it stores no actor, no reason and no new value, so it cannot answer who
+--     renamed a person or what the name became.
+--
+-- The application already has `audit_log` for this purpose: it records the
+-- acting account, the action, the before/after values and a timestamp, is
+-- exposed in the Activity Log page, masks sensitive fields and is pruned after
+-- one year. `person_history` is a write-only, incomplete duplicate that grows
+-- without limit and has no foreign key, so deleting a person leaves orphan rows
+-- behind.
+--
+-- Dependent objects: the trigger `after_person_update_history` and the function
+-- `after_person_update_history_func()` are the only ones. No view, function or
+-- other trigger in the database mentions the table.
+--
+-- Run against the live database:
+--   psql -U postgres -d eNote -f 23-drop-person-history.sql
+--
+-- Run this after the i18n migration that rewrites the trigger, so the old
+-- migration does not recreate the object later in the same upgrade.
+--
+-- Fresh installs: the full schema dump restored for a new installation still
+-- contains the table, trigger and function. Regenerate that dump from a
+-- database this migration has been applied to, otherwise a new install
+-- recreates them.
+--
+-- Safe to re-run: every statement is IF EXISTS.
+--
+-- Rollback, should the history ever be needed again (current i18n shape):
+--   CREATE TABLE public.person_history (
+--     history_id bigint NOT NULL,
+--     person_id bigint NOT NULL,
+--     system_action varchar(10) NOT NULL,
+--     changed_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+--     old_first_name_la varchar(48),
+--     old_first_name_ar varchar(48),
+--     old_first_name varchar(48) GENERATED ALWAYS AS
+--       (COALESCE(old_first_name_la, old_first_name_ar)) STORED,
+--     old_last_name_la varchar(48),
+--     old_last_name_ar varchar(48),
+--     old_last_name varchar(48) GENERATED ALWAYS AS
+--       (COALESCE(old_last_name_la, old_last_name_ar)) STORED
+--   );
+--   ALTER TABLE public.person_history
+--     ADD CONSTRAINT person_history_pkey PRIMARY KEY (history_id);
+--   CREATE SEQUENCE public.person_history_history_id_seq
+--     START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1;
+--   ALTER SEQUENCE public.person_history_history_id_seq
+--     OWNED BY public.person_history.history_id;
+--   ALTER TABLE public.person_history ALTER COLUMN history_id
+--     SET DEFAULT nextval('public.person_history_history_id_seq'::regclass);
+--   CREATE OR REPLACE FUNCTION public.after_person_update_history_func()
+--   RETURNS trigger LANGUAGE plpgsql AS $$
+--   BEGIN
+--     IF (old.person_first_name_la IS DISTINCT FROM new.person_first_name_la
+--         OR old.person_first_name_ar IS DISTINCT FROM new.person_first_name_ar
+--         OR old.person_last_name_la IS DISTINCT FROM new.person_last_name_la
+--         OR old.person_last_name_ar IS DISTINCT FROM new.person_last_name_ar) THEN
+--       INSERT INTO person_history (
+--         person_id,
+--         old_first_name_la, old_first_name_ar,
+--         old_last_name_la, old_last_name_ar,
+--         system_action
+--       ) VALUES (
+--         old.person_id,
+--         old.person_first_name_la, old.person_first_name_ar,
+--         old.person_last_name_la, old.person_last_name_ar,
+--         'UPDATE'
+--       );
+--     END IF;
+--     RETURN NULL;
+--   END;
+--   $$;
+--   CREATE TRIGGER after_person_update_history
+--     AFTER UPDATE ON public.person
+--     FOR EACH ROW
+--     EXECUTE FUNCTION public.after_person_update_history_func();
+-- ==============================================================================
+
+BEGIN;
+
+DROP TRIGGER IF EXISTS after_person_update_history ON public.person;
+DROP FUNCTION IF EXISTS public.after_person_update_history_func();
+DROP TABLE IF EXISTS public.person_history;
+
+COMMIT;

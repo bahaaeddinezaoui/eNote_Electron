@@ -1,0 +1,46 @@
+node_modules/
+
+# Build output
+out/
+dist/
+.vite/
+
+# Local scratch directories and logs
+/.tmp-*/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Local connection settings (contain database passwords)
+pg_config.json
+storage_config.json
+deployment.json
+.env
+.env.*
+!.env.example
+
+# Database backups
+backups/
+*.dump
+*.sql.gz
+
+# Generated LaTeX files
+/Fiche_Technique_eNote/_out/
+*.aux
+*.lof
+*.lot
+*.out
+*.toc
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.bbl
+*.blg
+*.bcf
+*.run.xml
+
+# OS / editor noise
+.DS_Store
+Thumbs.db

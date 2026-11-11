@@ -1,0 +1,27 @@
+export const ar24 = {
+  'Connected to {host}': 'متصل بـ {host}',
+  'Not connected': 'غير متصل',
+  'The server address is set by your administrator.': 'يتم تحديد عنوان الخادم بواسطة المسؤول.',
+  'Server settings': 'إعدادات الخادم',
+  'Connection saved. You can sign in now.': 'تم حفظ الاتصال. يمكنك تسجيل الدخول الآن.',
+  'Ask your administrator for these details. The connection is saved on this computer.': 'اطلب هذه التفاصيل من مسؤول النظام. يتم حفظ الاتصال على هذا الجهاز.',
+  'Connection failed': 'فشل الاتصال',
+  'Host': 'المضيف',
+  'Port': 'المنفذ',
+  'Database': 'قاعدة البيانات',
+  'User': 'المستخدم',
+  'Password': 'كلمة المرور',
+  'Connecting...': 'جاري الاتصال...',
+  'Connect': 'اتصال',
+  'Latest uploads': 'أحدث الملفات المرفوعة',
+  'Nothing has been added yet.': 'لم تتم إضافة أي شيء بعد.',
+  'Popular': 'الأكثر استخدامًا',
+  'Last 90 days': 'آخر 90 يومًا',
+  'opened once': 'فُتح مرة واحدة',
+  'opened {count} times': 'فُتح {count} مرة',
+  'No usage recorded yet. Files appear here once they are opened or downloaded.': 'لا يوجد استخدام مسجّل بعد. تظهر الملفات هنا عند فتحها أو تنزيلها.',
+  'Show in the library': 'إظهار في المكتبة',
+  'Open': 'فتح',
+  'this week': 'هذا الأسبوع'
+}
+

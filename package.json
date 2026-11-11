@@ -1,0 +1,154 @@
+{
+  "name": "enote",
+  "productName": "eNote",
+  "version": "4.0.0",
+  "type": "module",
+  "main": "./out/main/index.js",
+  "scripts": {
+    "start": "electron-vite preview",
+    "dev": "electron-vite dev",
+    "check:i18n": "node scripts/check-i18n.mjs",
+    "build": "npm run check:i18n && electron-vite build",
+    "postinstall": "electron-builder install-app-deps",
+    "migrate:resources": "node scripts/migrate-resources.cjs",
+    "organize:resources": "node scripts/organize-resources.cjs",
+    "build:win": "npm run build && electron-builder --win --config",
+    "build:mac": "npm run build && electron-builder --mac --config",
+    "build:linux": "npm run build && electron-builder --linux --config",
+    "build:linux:portable": "npm run build && electron-builder --linux tar.gz --config"
+  },
+  "private": true,
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "eNote — offline academic management for schools",
+  "homepage": "https://enote.invalid",
+  "desktopName": "enote.desktop",
+  "build": {
+    "appId": "com.enote",
+    "directories": {
+      "buildResources": "build"
+    },
+    "files": [
+      "out/**/*",
+      "package.json",
+      "!**/*.map"
+    ],
+    "extraResources": [
+      {
+        "from": "build/icon.png",
+        "to": "icon.png"
+      },
+      {
+        "from": "build/icon-red.png",
+        "to": "icon-red.png"
+      },
+      {
+        "from": "build/icon-gold.png",
+        "to": "icon-gold.png"
+      },
+      {
+        "from": "build/icon-blue.png",
+        "to": "icon-blue.png"
+      },
+      {
+        "from": "build/icon-pink.png",
+        "to": "icon-pink.png"
+      },
+      {
+        "from": "build/fonts",
+        "to": "fonts"
+      },
+      {
+        "from": "deploy/client/deployment.json.example",
+        "to": "deployment.json.example"
+      }
+    ],
+    "win": {
+      "icon": "build/icon.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "perMachine": false,
+      "createDesktopShortcut": "always",
+      "createStartMenuShortcut": true,
+      "shortcutName": "eNote"
+    },
+    "mac": {
+      "icon": "build/icon.png"
+    },
+    "linux": {
+      "icon": "build/icons",
+      "target": [
+        {
+          "target": "AppImage",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "deb",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "tar.gz",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "category": "Education",
+      "synopsis": "Offline academic management for schools",
+      "maintainer": "eNote Maintainers <maintainers@enote.invalid>",
+      "executableName": "enote",
+      "syncDesktopName": true,
+      "artifactName": "${name}-${version}-${arch}.${ext}"
+    },
+    "appImage": {
+      "artifactName": "${name}-${version}-${arch}.${ext}"
+    },
+    "deb": {
+      "artifactName": "${name}_${version}_${arch}.${ext}"
+    }
+  },
+  "devDependencies": {
+    "@babel/parser": "^7.29.7",
+    "@tailwindcss/postcss": "^4.3.0",
+    "@vitejs/plugin-react": "^5.2.0",
+    "autoprefixer": "^10.5.0",
+    "electron": "^45.2.2",
+    "electron-builder": "^26.15.2",
+    "electron-vite": "^5.0.0",
+    "postcss": "^8.5.15",
+    "tailwindcss": "^4.3.0",
+    "vite": "^7.3.7"
+  },
+  "dependencies": {
+    "@electron-toolkit/preload": "^3.0.2",
+    "@electron-toolkit/utils": "^4.0.0",
+    "@radix-ui/react-dialog": "^1.1.23",
+    "bcryptjs": "^3.0.3",
+    "lucide-react": "^1.17.0",
+    "pg": "^8.21.0",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "react-router-dom": "^7.17.0"
+  }
+}

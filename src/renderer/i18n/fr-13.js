@@ -1,0 +1,75 @@
+// French interface strings — notifications, promotions, the student record card
+// and the reporter's own bug-report page.
+export const fr13 = {
+  // Notifications
+  "Everything is marked as read.": "Tout est marqué comme lu.",
+  "Signals": "Signaux",
+  "Marking…": "Marquage…",
+  "Live · updates as records are entered": "En direct · mises à jour à mesure des saisies",
+  "Loading notifications": "Chargement des notifications",
+  "Nothing unread.": "Rien de non lu.",
+  "Absences and observations recorded by teachers arrive here the moment they are saved.": "Les absences et observations saisies par les enseignants arrivent ici dès leur enregistrement.",
+  "This family is muted in Settings: the notification is listed here but never rings.": "Cette famille est en sourdine dans les Réglages : la notification est listée ici mais ne sonne jamais.",
+  "Muted": "En sourdine",
+  "This session has started and nothing has been recorded for it yet. Record an absence or an observation, or confirm the session was held with nothing to report. The reminder is withdrawn as soon as you do.": "Cette séance a commencé et rien n’y a encore été saisi. Saisissez une absence ou une observation, ou confirmez que la séance a eu lieu sans rien à signaler. Le rappel disparaît dès que vous le faites.",
+  "No absence and no observation was recorded for this session, so it is treated as a class that was not taken. If the session was held and there was simply nothing to report, confirm it and the alert is withdrawn for everyone.": "Aucune absence ni observation n’a été saisie pour cette séance : elle est donc considérée comme un cours non assuré. Si la séance a eu lieu et qu’il n’y avait simplement rien à signaler, confirmez-le et l’alerte est retirée pour tout le monde.",
+  "Comments": "Commentaires",
+  "Loading comments…": "Chargement des commentaires…",
+  "Write a comment on this record…": "Écrire un commentaire sur cette fiche…",
+  "Posting…": "Publication…",
+  "Absences and observations are recorded against the student; these notifications mirror them. A class that has started with no attendance taken raises a reminder to its teacher, which becomes a missed class once the slot ends. Muted families stay listed here but are never counted or announced; change them in Settings.": "Les absences et observations sont saisies au nom de l’étudiant ; ces notifications en sont le reflet. Un cours commencé sans relevé de présence déclenche un rappel à son enseignant, qui devient un cours manqué une fois le créneau terminé. Les familles en sourdine restent listées ici mais ne sont jamais comptées ni annoncées ; modifiez-les dans les Réglages.",
+
+  // Promotions
+  "That promotion could not be saved.": "Cette promotion n’a pas pu être enregistrée.",
+  "Reference data": "Données de référence",
+  "promotion": "promotion",
+  "promotions": "promotions",
+  "Loading promotions…": "Chargement des promotions…",
+  "No promotions found": "Aucune promotion trouvée",
+  "No promotions match this search": "Aucune promotion ne correspond à cette recherche",
+  "Add the first promotion with the button in the header.": "Ajoutez la première promotion avec le bouton de l’en-tête.",
+  "Clear the search or the category filter to see the rest.": "Effacez la recherche ou le filtre de catégorie pour voir le reste.",
+  "Edit Promotion": "Modifier la promotion",
+  "A promotion code and its label in the three interface languages, optionally tied to a teaching category.": "Un code de promotion et son libellé dans les trois langues de l’interface, éventuellement rattachés à une catégorie d’enseignement.",
+  "New record": "Nouvel enregistrement",
+  "Promotion Label": "Libellé de la promotion",
+  "Are you sure you want to delete this promotion?": "Voulez-vous vraiment supprimer cette promotion ?",
+
+  // Student record card
+  "Absences on record": "Absences enregistrées",
+  "Observations on record": "Observations enregistrées",
+  "Student number": "Numéro d’étudiant",
+  "Summer Jacket": "Veste d’été",
+  "Winter Jacket": "Veste d’hiver",
+  "Summer Trousers": "Pantalon d’été",
+  "Winter Trousers": "Pantalon d’hiver",
+  "Summer Shirt": "Chemise d’été",
+  "Winter Shirt": "Chemise d’hiver",
+  "Summer Hat": "Chapeau d’été",
+  "Winter Hat": "Chapeau d’hiver",
+  "Summer Skirt": "Jupe d’été",
+
+  // My bug reports
+  "Your reports": "Vos rapports",
+  "Every bug you have reported, with the status the team has given it.": "Chaque bogue que vous avez signalé, avec le statut que l’équipe lui a donné.",
+  "Loading your reports...": "Chargement de vos rapports...",
+  "No report from you yet": "Aucun rapport de votre part pour l’instant",
+  "Once you submit a bug report, it appears here with its status.": "Dès que vous envoyez un rapport de bogue, il apparaît ici avec son statut.",
+  "No report with this status": "Aucun rapport avec ce statut",
+  "Choose another status or show them all.": "Choisissez un autre statut ou affichez-les tous.",
+  "Outcome": "Résultat",
+  "By": "Par",
+  "The team is looking into it.": "L’équipe s’en occupe.",
+  "No status change has been recorded yet.": "Aucun changement de statut n’a encore été enregistré.",
+
+  // Uniform sizes (Settings → Registers → Uniform sizes)
+  "Winter Skirt": "Jupe d’hiver",
+  "Combat Outfit Size": "Taille de tenue de combat",
+  "Uniform sizes": "Tailles des uniformes",
+  "The sizes a student may be issued for each uniform item": "Les tailles qu’un étudiant peut recevoir pour chaque pièce d’uniforme",
+  "Uniform item": "Pièce d’uniforme",
+  "Size": "Taille",
+  "Delete this size? Students already recorded with it keep their saved value.": "Supprimer cette taille ? Les étudiants déjà enregistrés avec elle conservent leur valeur.",
+  "A male student has no skirt sizes.": "Un étudiant masculin n’a pas de taille de jupe.",
+  "No uniform sizes are defined yet. An administrator adds them in Settings → Registers → Uniform sizes.": "Aucune taille d’uniforme n’est encore définie. Un administrateur les ajoute dans Paramètres → Registres → Tailles des uniformes."
+}

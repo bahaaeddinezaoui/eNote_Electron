@@ -1,0 +1,87 @@
+% Carte des domaines du MPD : 111 tables, 6 domaines.
+\begin{tikzpicture}[font=\scriptsize]
+\tikzset{dom/.style={draw=black!55, rounded corners=2pt, fill=blue!3, inner sep=5pt, align=left, text width=7.4cm}}
+\node[dom, anchor=north west] at (0,0) {{\scriptsize\textbf{Identité et comptes}}\\[1pt]
+{\tiny 21 tables, 34 clés étrangères}\\[3pt]
+{\tiny\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.42cm}>{\raggedright\arraybackslash}p{3.42cm}@{}}
+{\tiny person} & {\tiny direction}\\
+{\tiny person\_\allowbreak{}has\_\allowbreak{}role} & {\tiny army}\\
+{\tiny user} & {\tiny academic\_\allowbreak{}level}\\
+{\tiny role} & {\tiny academic\_\allowbreak{}grade}\\
+{\tiny secretary\_\allowbreak{}detail} & {\tiny military\_\allowbreak{}grade}\\
+{\tiny student\_\allowbreak{}detail} & {\tiny educational\_\allowbreak{}certificate}\\
+{\tiny student\_\allowbreak{}parent\_\allowbreak{}info} & {\tiny student\_\allowbreak{}military\_\allowbreak{}certificate}\\
+{\tiny student\_\allowbreak{}emergency\_\allowbreak{}contact} & {\tiny student\_\allowbreak{}educational\_\allowbreak{}certificate}\\
+{\tiny address} & {\tiny student\_\allowbreak{}combat\_\allowbreak{}outfit}\\
+{\tiny department} & {\tiny student\_\allowbreak{}parade\_\allowbreak{}uniform}\\
+{\tiny } & {\tiny student\_\allowbreak{}hobby}\\
+\end{tabular}}};
+\node[dom, anchor=north west] at (8.1,0) {{\scriptsize\textbf{Référentiels}}\\[1pt]
+{\tiny 16 tables, 3 clés étrangères}\\[3pt]
+{\tiny\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.42cm}>{\raggedright\arraybackslash}p{3.42cm}@{}}
+{\tiny country} & {\tiny recruitment\_\allowbreak{}source}\\
+{\tiny wilaya} & {\tiny student\_\allowbreak{}speciality}\\
+{\tiny daira} & {\tiny punishment\_\allowbreak{}type}\\
+{\tiny commune} & {\tiny reward\_\allowbreak{}type}\\
+{\tiny profession} & {\tiny punishment\_\allowbreak{}justification}\\
+{\tiny hobby} & {\tiny reward\_\allowbreak{}justification}\\
+{\tiny health\_\allowbreak{}status} & {\tiny observation\_\allowbreak{}motif}\\
+{\tiny relation} & {\tiny document\_\allowbreak{}type}\\
+\end{tabular}}};
+\node[dom, anchor=north west] at (0,-4.21) {{\scriptsize\textbf{Structure pédagogique}}\\[1pt]
+{\tiny 31 tables, 50 clés étrangères}\\[3pt]
+{\tiny\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.42cm}>{\raggedright\arraybackslash}p{3.42cm}@{}}
+{\tiny study\_\allowbreak{}year} & {\tiny teaching\_\allowbreak{}group}\\
+{\tiny study\_\allowbreak{}semester} & {\tiny teaching\_\allowbreak{}category}\\
+{\tiny study\_\allowbreak{}week} & {\tiny promotion}\\
+{\tiny study\_\allowbreak{}day} & {\tiny classroom}\\
+{\tiny major} & {\tiny classroom\_\allowbreak{}category}\\
+{\tiny major\_\allowbreak{}category} & {\tiny study\_\allowbreak{}session\_\allowbreak{}type}\\
+{\tiny major\_\allowbreak{}belongs\_\allowbreak{}to\_\allowbreak{}major\_\allowbreak{}category} & {\tiny study\_\allowbreak{}session\_\allowbreak{}time\_\allowbreak{}slot}\\
+{\tiny major\_\allowbreak{}is\_\allowbreak{}prerequisite\_\allowbreak{}of\_\allowbreak{}major} & {\tiny person\_\allowbreak{}belongs\_\allowbreak{}to\_\allowbreak{}section}\\
+{\tiny major\_\allowbreak{}semester\_\allowbreak{}factor} & {\tiny person\_\allowbreak{}studies\_\allowbreak{}major}\\
+{\tiny major\_\allowbreak{}hourly\_\allowbreak{}volume} & {\tiny person\_\allowbreak{}teaches\_\allowbreak{}major}\\
+{\tiny major\_\allowbreak{}hourly\_\allowbreak{}volume\_\allowbreak{}by\_\allowbreak{}session\_\allowbreak{}type} & {\tiny student\_\allowbreak{}section}\\
+{\tiny major\_\allowbreak{}teacher} & {\tiny student\_\allowbreak{}section\_\allowbreak{}history}\\
+{\tiny section} & {\tiny student\_\allowbreak{}dynamic\_\allowbreak{}group\_\allowbreak{}by\_\allowbreak{}major}\\
+{\tiny teaching\_\allowbreak{}section} & {\tiny user\_\allowbreak{}teaching\_\allowbreak{}category\_\allowbreak{}scope}\\
+{\tiny teaching\_\allowbreak{}section\_\allowbreak{}hourly\_\allowbreak{}volume} & {\tiny teacher\_\allowbreak{}constraint}\\
+{\tiny teacher\_\allowbreak{}constraint\_\allowbreak{}option} & {\tiny }\\
+\end{tabular}}};
+\node[dom, anchor=north west] at (8.1,-4.21) {{\scriptsize\textbf{Enseignement et évaluation}}\\[1pt]
+{\tiny 17 tables, 24 clés étrangères}\\[3pt]
+{\tiny\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.42cm}>{\raggedright\arraybackslash}p{3.42cm}@{}}
+{\tiny chapter} & {\tiny examination}\\
+{\tiny lesson} & {\tiny examination\_\allowbreak{}type}\\
+{\tiny document} & {\tiny examination\_\allowbreak{}group}\\
+{\tiny lesson\_\allowbreak{}has\_\allowbreak{}document} & {\tiny examination\_\allowbreak{}mark\_\allowbreak{}history}\\
+{\tiny document\_\allowbreak{}access} & {\tiny person\_\allowbreak{}has\_\allowbreak{}examination}\\
+{\tiny study\_\allowbreak{}session} & {\tiny person\_\allowbreak{}is\_\allowbreak{}guard\_\allowbreak{}in\_\allowbreak{}examination}\\
+{\tiny study\_\allowbreak{}session\_\allowbreak{}register} & {\tiny classroom\_\allowbreak{}seat}\\
+{\tiny library\_\allowbreak{}category} & {\tiny library\_\allowbreak{}item}\\
+{\tiny library\_\allowbreak{}access} & {\tiny }\\
+\end{tabular}}};
+\node[dom, anchor=north west] at (0,-9.46) {{\scriptsize\textbf{Vie scolaire}}\\[1pt]
+{\tiny 6 tables, 17 clés étrangères}\\[3pt]
+{\tiny\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.42cm}>{\raggedright\arraybackslash}p{3.42cm}@{}}
+{\tiny student\_\allowbreak{}gets\_\allowbreak{}absent} & {\tiny secretary\_\allowbreak{}punishes\_\allowbreak{}student}\\
+{\tiny absence\_\allowbreak{}justification} & {\tiny secretary\_\allowbreak{}rewards\_\allowbreak{}student}\\
+{\tiny student\_\allowbreak{}undergoes\_\allowbreak{}observation\_\allowbreak{}by\_\allowbreak{}teacher} & {\tiny director\_\allowbreak{}comment}\\
+\end{tabular}}};
+\node[dom, anchor=north west] at (8.1,-9.46) {{\scriptsize\textbf{Support et exploitation}}\\[1pt]
+{\tiny 20 tables, 29 clés étrangères}\\[3pt]
+{\tiny\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.42cm}>{\raggedright\arraybackslash}p{3.42cm}@{}}
+{\tiny bug\_\allowbreak{}report} & {\tiny direct\_\allowbreak{}message}\\
+{\tiny changelog} & {\tiny app\_\allowbreak{}notification}\\
+{\tiny feature} & {\tiny app\_\allowbreak{}notification\_\allowbreak{}read}\\
+{\tiny beta\_\allowbreak{}test\_\allowbreak{}report} & {\tiny director\_\allowbreak{}notification\_\allowbreak{}read}\\
+{\tiny beta\_\allowbreak{}test\_\allowbreak{}feature} & {\tiny user\_\allowbreak{}notification\_\allowbreak{}mute}\\
+{\tiny message} & {\tiny app\_\allowbreak{}option}\\
+{\tiny message\_\allowbreak{}recipient} & {\tiny app\_\allowbreak{}locked\_\allowbreak{}page}\\
+{\tiny message\_\allowbreak{}rule} & {\tiny audit\_\allowbreak{}log}\\
+{\tiny message\_\allowbreak{}target\_\allowbreak{}role} & {\tiny user\_\allowbreak{}seen\_\allowbreak{}changelog}\\
+{\tiny direct\_\allowbreak{}conversation} & {\tiny app\_\allowbreak{}locked\_\allowbreak{}page\_\allowbreak{}role}\\
+\end{tabular}}};
+\node[anchor=north west, font=\scriptsize, text width=14.6cm, align=left] at (0,-13.46) {%
+Les flèches des figures suivantes vont de la clé étrangère vers la table référencée. La lettre N marque le côté multiple ; les tables intermédiaires portent une clé primaire composée. Les trois tables de la bibliothèque (\path{library_category}, \path{library_item}, \path{library_access}) sont créées à la première ouverture de la page et ne portent pas de clé étrangère.};
+\end{tikzpicture}
